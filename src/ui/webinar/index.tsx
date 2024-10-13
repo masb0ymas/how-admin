@@ -27,7 +27,7 @@ export default function Webinar() {
   const searchParams = useSearchParams()
   const tabs = searchParams.get('tabs') as string
 
-  const base_url = '/webinar'
+  const baseUrl = '/webinar'
 
   const defaultTabs = 'upcoming'
   const subtitle = capitalizeFirstLetter(tabs || defaultTabs)
@@ -36,7 +36,7 @@ export default function Webinar() {
     <Stack gap="xl">
       <MyTitlePage title="Webinar" subtitle={subtitle} />
 
-      <MyTabs baseURL={base_url} defaultValue={defaultTabs} data={tabLists} />
+      <MyTabs baseURL={baseUrl} defaultValue={defaultTabs} data={tabLists} />
     </Stack>
   )
 }
