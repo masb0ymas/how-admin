@@ -6,13 +6,14 @@ import { useSearchParams } from 'next/navigation'
 import MyTabs from '~/components/tabs'
 import MyTitlePage from '~/components/title/MyTitlePage'
 import { capitalizeFirstLetter } from '~/lib/string'
+import UpcomingTab from './upcoming'
 
 const tabLists = [
   {
     key: 'upcoming',
     title: 'Upcoming',
     icon: IconCalendarTime,
-    children: <Text>Upcoming</Text>,
+    children: <UpcomingTab />,
   },
   {
     key: 'archive',
