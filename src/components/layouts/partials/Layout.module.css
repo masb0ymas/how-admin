@@ -1,0 +1,15 @@
+.main {
+  flex: 1 1 0%;
+  width: 100vw;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding-top: calc(var(--mantine-header-height, 2.5rem) + 16px);
+  padding-bottom: calc(var(--mantine-footer-height, 2.5rem) + 16px);
+  padding-left: calc(var(--mantine-navbar-width, 4rem) + 16px);
+  padding-right: calc(var(--mantine-aside-width, 0px) + 16px);
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+}
+
+.section {
+  padding: 2rem;
+}
