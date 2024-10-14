@@ -3,6 +3,7 @@
 import _ from 'lodash'
 import { useRouter } from 'next/navigation'
 import { PropsWithChildren } from 'react'
+import { useStore } from '~/config/zustand'
 import useProfile from '~/data/query/useProfile'
 import VerifyPage from '../loader/VerifyPage'
 import Footer from './footer'
@@ -14,15 +15,18 @@ type IProps = PropsWithChildren
 
 export default function Layout({ children }: IProps) {
   const router = useRouter()
-  const { data, isLoading, isFetching } = useProfile()
 
+  const { data, isLoading, isFetching } = useProfile()
   const fetchingData = isLoading || isFetching
+
+  const removeAuthSession = useStore((state) => state.removeAuthSession)
 
   if (fetchingData) {
     return <VerifyPage loading={fetchingData} />
   }
 
   if (_.isEmpty(data) || _.isNil(data.email)) {
+    removeAuthSession()
     return router.push('/')
   }
 
