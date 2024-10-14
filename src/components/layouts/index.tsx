@@ -27,7 +27,8 @@ export default function Layout({ children }: IProps) {
 
   if (_.isEmpty(data) || _.isNil(data.email)) {
     removeAuthSession()
-    return router.push('/')
+    router.push('/')
+    return
   }
 
   return (

@@ -83,7 +83,8 @@ export default function Login() {
 
   // @ts-expect-error
   if (!_.isEmpty(data) || !_.isNil(data?.email)) {
-    return router.push('/dashboard')
+    router.push('/dashboard')
+    return
   }
 
   return (

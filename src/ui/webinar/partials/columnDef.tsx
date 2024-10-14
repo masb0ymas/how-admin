@@ -60,7 +60,7 @@ export const columnWebinar: DataTableColumn<WebinarEntity>[] = [
             size="compact-md"
             radius="md"
           >
-            Link
+            view
           </Button>
         )
       }
