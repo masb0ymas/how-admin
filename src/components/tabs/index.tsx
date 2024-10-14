@@ -33,8 +33,7 @@ export default function MyTabs(props: IProps) {
       variant="pills"
       radius="md"
       orientation="vertical"
-      defaultValue={defaultValue}
-      value={tabs}
+      value={tabs || defaultValue}
       onChange={(value) => router.push(`${baseURL}?tabs=${value}`)}
     >
       <Tabs.List w={150}>

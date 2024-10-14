@@ -1,7 +1,7 @@
 'use client'
 
 import { ActionIcon, Container, Group, rem, Tooltip } from '@mantine/core'
-import { IconEdit, IconTrash } from '@tabler/icons-react'
+import { IconEdit, IconEye, IconTrash } from '@tabler/icons-react'
 import { QueryObserverBaseResult } from '@tanstack/react-query'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import Link from 'next/link'
@@ -34,6 +34,12 @@ export default function MyTable<T>(props: IProps<T>) {
       render: ({ id }) => {
         return (
           <Group gap={4} justify="right" wrap="nowrap">
+            <Tooltip transitionProps={{ transition: 'pop', duration: 300 }} label="Detail">
+              <ActionIcon size="md" radius="md" color="teal" variant="subtle">
+                <IconEye size={22} stroke={1.5} />
+              </ActionIcon>
+            </Tooltip>
+
             <Tooltip transitionProps={{ transition: 'pop', duration: 300 }} label="Edit">
               <ActionIcon
                 size="md"
@@ -51,7 +57,7 @@ export default function MyTable<T>(props: IProps<T>) {
                 size="md"
                 radius="md"
                 variant="subtle"
-                color='red'
+                color="red"
                 component={Link}
                 href={`${baseURL}/${id}/edit`}
               >
