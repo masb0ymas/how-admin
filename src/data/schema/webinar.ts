@@ -39,6 +39,13 @@ const create = z.object({
     invalid_type_error: 'end_date must be a date',
   }),
 
+  link: z
+    .string({
+      required_error: 'link is required',
+      invalid_type_error: 'link must be a string',
+    })
+    .min(2, `link can't be empty`),
+
   ipfs_cid: z
     .string({
       required_error: 'ipfs_cid is required',

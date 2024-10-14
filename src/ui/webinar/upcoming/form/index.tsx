@@ -6,6 +6,7 @@ import {
   Divider,
   Grid,
   Paper,
+  Select,
   Stack,
   Text,
   Textarea,
@@ -13,29 +14,63 @@ import {
 } from '@mantine/core'
 import { DateTimePicker } from '@mantine/dates'
 import { useForm, zodResolver } from '@mantine/form'
-import { useRouter } from 'next/navigation'
+import { showNotification } from '@mantine/notifications'
+import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
+import { useMutation } from '@tanstack/react-query'
+import { AxiosRequestConfig } from 'axios'
+import _ from 'lodash'
+import { useParams, useRouter } from 'next/navigation'
 import MyTitlePage from '~/components/title/MyTitlePage'
+import { useStore } from '~/config/zustand'
+import { WebinarEntity } from '~/data/entity/webinar'
+import useCategory from '~/data/query/category/useCategory'
+import WebinarRepository from '~/data/repository/webinar'
 import webinarSchema from '~/data/schema/webinar'
 
 type IProps = {
   initialValues: any
   validate: any
+  mutation: ReturnType<typeof useMutation<any, any, any, any>>
 }
 
 function AbstractForm(props: IProps) {
-  const { initialValues, validate } = props
+  const { initialValues, validate, mutation } = props
   const router = useRouter()
+
+  const queryCategory = useCategory()
+  const selectCategory = queryCategory.data.map((item) => {
+    return {
+      label: item.name,
+      value: item.id,
+    }
+  })
 
   const form = useForm({
     initialValues,
     validate,
   })
 
-  function onFormSubmit() {
+  async function onFormSubmit() {
     try {
       console.log(form.values)
-    } catch (error) {
+      await mutation.mutateAsync(form.values)
+    } catch (error: any) {
       console.log(error)
+
+      let title = 'Catch Error'
+      let message = 'Something went wrong.'
+
+      if (error.response?.data?.message) {
+        title = error.response.data.error
+        message = error.response.data.message
+      }
+
+      showNotification({
+        title: title,
+        message: message,
+        color: 'red',
+        icon: <IconAlertCircle size={18} stroke={1.5} />,
+      })
     }
   }
 
@@ -85,16 +120,36 @@ function AbstractForm(props: IProps) {
                     placeholder="End Date"
                     required
                     radius="md"
+                    minDate={!_.isNil(form.values.start_date) ? form.values.start_date : new Date()}
                     {...form.getInputProps('end_date')}
                   />
                 </Grid.Col>
 
-                <Grid.Col span={12}>
+                <Grid.Col span={6}>
+                  <Select
+                    label="Category"
+                    placeholder="Choose category"
+                    data={selectCategory}
+                    clearable
+                    {...form.getInputProps('category_id')}
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={6}>
                   <TextInput
                     label="IPFS CID"
                     placeholder="IPFS CID"
                     radius="md"
                     {...form.getInputProps('ipfs_cid')}
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={12}>
+                  <TextInput
+                    label="Link"
+                    placeholder="Link"
+                    radius="md"
+                    {...form.getInputProps('link')}
                   />
                 </Grid.Col>
 
@@ -147,6 +202,29 @@ function AbstractForm(props: IProps) {
 }
 
 export function FormAdd() {
+  const router = useRouter()
+
+  const { auth } = useStore()
+  const access_token = _.get(auth, 'access_token', '')
+
+  const axiosConfig: AxiosRequestConfig = {
+    headers: { Authorization: `Bearer ${access_token}` },
+  }
+
+  const postWebinar = useMutation({
+    mutationFn: (data: WebinarEntity) => WebinarRepository.create(data, axiosConfig),
+    onSuccess: (data) => {
+      showNotification({
+        title: 'Success',
+        message: data.message,
+        color: 'green',
+        icon: <IconCheck size={18} stroke={1.5} />,
+      })
+
+      router.push('/webinar?tabs=upcoming')
+    },
+  })
+
   return (
     <AbstractForm
       initialValues={{
@@ -155,15 +233,42 @@ export function FormAdd() {
         speakers: '',
         start_date: '',
         end_date: '',
+        link: '',
         ipfs_cid: '',
         is_active: false,
       }}
+      mutation={postWebinar}
       validate={zodResolver(webinarSchema.create)}
     />
   )
 }
 
 export function FormEdit() {
+  const router = useRouter()
+  const params = useParams<{ id: string }>()
+  const id = params.id
+
+  const { auth } = useStore()
+  const access_token = _.get(auth, 'access_token', '')
+
+  const axiosConfig: AxiosRequestConfig = {
+    headers: { Authorization: `Bearer ${access_token}` },
+  }
+
+  const updateWebinar = useMutation({
+    mutationFn: (data: WebinarEntity) => WebinarRepository.update(id, data, axiosConfig),
+    onSuccess: (data) => {
+      showNotification({
+        title: 'Success',
+        message: data.message,
+        color: 'green',
+        icon: <IconCheck size={18} stroke={1.5} />,
+      })
+
+      router.push('/webinar?tabs=upcoming')
+    },
+  })
+
   return (
     <AbstractForm
       initialValues={{
@@ -172,9 +277,11 @@ export function FormEdit() {
         speakers: '',
         start_date: '',
         end_date: '',
+        link: '',
         ipfs_cid: '',
         is_active: false,
       }}
+      mutation={updateWebinar}
       validate={zodResolver(webinarSchema.create)}
     />
   )

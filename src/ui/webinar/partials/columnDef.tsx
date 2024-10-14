@@ -20,6 +20,7 @@ export const columnWebinar: DataTableColumn<WebinarEntity>[] = [
   {
     accessor: 'category.name',
     title: 'Category',
+    width: 120,
   },
   {
     accessor: 'start_date',
