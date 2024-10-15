@@ -2,6 +2,7 @@
 
 import { Divider, Stack } from '@mantine/core'
 import Description, { ItemType } from '~/components/description'
+import { env } from '~/config/env'
 import { WebinarEntity } from '~/data/entity/webinar'
 
 type IProps = {
@@ -11,7 +12,7 @@ type IProps = {
 export default function WebinarDetail(props: IProps) {
   const { data } = props
 
-  const newData = { ...data, ipfs_cid: `https://ipfs.filebase.io/ipfs/${data.ipfs_cid}` }
+  const newData = { ...data, ipfs_cid: `${env.IPFS_API_URL}/${data.ipfs_cid}` }
 
   const details = [
     { key: 'title', title: 'Webinar', type: ItemType.string },

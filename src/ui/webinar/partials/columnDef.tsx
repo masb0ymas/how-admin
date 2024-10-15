@@ -5,6 +5,7 @@ import { IconExternalLink } from '@tabler/icons-react'
 import { format } from 'date-fns'
 import { DataTableColumn } from 'mantine-datatable'
 import Link from 'next/link'
+import { env } from '~/config/env'
 import { WebinarEntity } from '~/data/entity/webinar'
 
 export const columnWebinar: DataTableColumn<WebinarEntity>[] = [
@@ -70,5 +71,25 @@ export const columnWebinar: DataTableColumn<WebinarEntity>[] = [
   {
     accessor: 'ipfs_cid',
     title: 'IPFS CID',
+    render: ({ ipfs_cid }) => {
+      if (ipfs_cid) {
+        const link = `${env.IPFS_API_URL}/${ipfs_cid}`
+        return (
+          <Button
+            variant="subtle"
+            component={Link}
+            href={link}
+            target="_blank"
+            rel="noreferrer"
+            leftSection={<IconExternalLink size={18} stroke={1.5} />}
+            size="compact-md"
+            radius="md"
+          >
+            view
+          </Button>
+        )
+      }
+      return '-'
+    },
   },
 ]
