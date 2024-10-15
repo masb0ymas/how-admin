@@ -6,7 +6,7 @@ import MyTitle from './index'
 
 interface IProps {
   title: string
-  subtitle: string
+  subtitle?: string
   onBack?: () => void
 }
 
@@ -24,9 +24,12 @@ export default function MyTitlePage(props: IProps) {
       )}
 
       <MyTitle>{title}</MyTitle>
-      <Badge variant="light" color="blue" size="lg" radius="md" lts={1}>
-        {subtitle}
-      </Badge>
+
+      {subtitle && (
+        <Badge variant="light" color="blue" size="lg" radius="md" lts={1}>
+          {subtitle}
+        </Badge>
+      )}
     </Group>
   )
 }

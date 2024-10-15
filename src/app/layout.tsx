@@ -1,6 +1,12 @@
 import '@mantine/core/styles.css'
+import '@mantine/dates/styles.css'
 import '@mantine/notifications/styles.css'
 import '@mantine/nprogress/styles.css'
+
+// mantine-datatable
+import 'mantine-datatable/styles.css'
+import 'mantine-datatable/styles.layer.css'
+import '~/styles/table.css'
 
 import { ColorSchemeScript } from '@mantine/core'
 import { PropsWithChildren } from 'react'

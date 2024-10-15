@@ -6,13 +6,14 @@ import { useSearchParams } from 'next/navigation'
 import MyTabs from '~/components/tabs'
 import MyTitlePage from '~/components/title/MyTitlePage'
 import { capitalizeFirstLetter } from '~/lib/string'
+import UpcomingTab from './upcoming'
 
 const tabLists = [
   {
     key: 'upcoming',
     title: 'Upcoming',
     icon: IconCalendarTime,
-    children: <Text>Upcoming</Text>,
+    children: <UpcomingTab />,
   },
   {
     key: 'archive',
@@ -26,7 +27,7 @@ export default function Webinar() {
   const searchParams = useSearchParams()
   const tabs = searchParams.get('tabs') as string
 
-  const base_url = '/webinar'
+  const baseUrl = '/webinar'
 
   const defaultTabs = 'upcoming'
   const subtitle = capitalizeFirstLetter(tabs || defaultTabs)
@@ -35,7 +36,7 @@ export default function Webinar() {
     <Stack gap="xl">
       <MyTitlePage title="Webinar" subtitle={subtitle} />
 
-      <MyTabs baseURL={base_url} defaultValue={defaultTabs} data={tabLists} />
+      <MyTabs baseURL={baseUrl} defaultValue={defaultTabs} data={tabLists} />
     </Stack>
   )
 }

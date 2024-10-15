@@ -1,6 +1,7 @@
 'use client'
 
 import { MantineProvider } from '@mantine/core'
+import { ModalsProvider } from '@mantine/modals'
 import { Notifications } from '@mantine/notifications'
 import { NavigationProgress } from '@mantine/nprogress'
 import { PropsWithChildren } from 'react'
@@ -11,10 +12,12 @@ type IProps = PropsWithChildren
 export default function WrapperMantine({ children }: IProps) {
   return (
     <MantineProvider theme={theme}>
-      <NavigationProgress />
-      <Notifications />
+      <ModalsProvider>
+        <NavigationProgress />
+        <Notifications />
 
-      {children}
+        {children}
+      </ModalsProvider>
     </MantineProvider>
   )
 }
