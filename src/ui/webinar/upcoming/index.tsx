@@ -1,6 +1,7 @@
 'use client'
 
 import { Button, Group, TextInput } from '@mantine/core'
+import { modals } from '@mantine/modals'
 import { IconPlus, IconSearch } from '@tabler/icons-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -8,6 +9,7 @@ import MyTable from '~/components/table'
 import { WebinarEntity } from '~/data/entity/webinar'
 import useWebinar from '~/data/query/webinar/useWebinar'
 import { columnWebinar } from '../partials/columnDef'
+import WebinarDetail from '../partials/Detail'
 
 export default function UpcomingTab() {
   const query = useWebinar()
@@ -46,6 +48,14 @@ export default function UpcomingTab() {
         onPageChange={setPage}
         recordsPerPage={pageSize}
         totalRecords={query.total}
+        showDetail={(data) => {
+          modals.open({
+            title: data.title,
+            size: 'lg',
+            radius: 'lg',
+            children: <WebinarDetail data={data} />,
+          })
+        }}
       />
     </>
   )

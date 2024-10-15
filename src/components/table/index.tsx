@@ -16,10 +16,11 @@ type IProps<T> = ReturnType<typeof DataTable<T>> & {
   query: IQuery
   columns: DataTableColumn<T>[]
   baseURL: string
+  showDetail?: (data: T) => void
 }
 
 export default function MyTable<T>(props: IProps<T>) {
-  const { columns, baseURL, ...otherProps } = props
+  const { columns, baseURL, showDetail, ...otherProps } = props
   const { data, isLoading, isFetching } = props.query
 
   const [selectedRecords, setSelectedRecords] = useState<T[]>([])
@@ -31,14 +32,22 @@ export default function MyTable<T>(props: IProps<T>) {
       title: 'Actions',
       textAlign: 'center',
       width: '0%',
-      render: ({ id }) => {
+      render: (values) => {
         return (
           <Group gap={4} justify="right" wrap="nowrap">
-            <Tooltip transitionProps={{ transition: 'pop', duration: 300 }} label="Detail">
-              <ActionIcon size="md" radius="md" color="teal" variant="subtle">
-                <IconEye size={22} stroke={1.5} />
-              </ActionIcon>
-            </Tooltip>
+            {showDetail?.call && (
+              <Tooltip transitionProps={{ transition: 'pop', duration: 300 }} label="Detail">
+                <ActionIcon
+                  size="md"
+                  radius="md"
+                  color="teal"
+                  variant="subtle"
+                  onClick={() => showDetail(values)}
+                >
+                  <IconEye size={22} stroke={1.5} />
+                </ActionIcon>
+              </Tooltip>
+            )}
 
             <Tooltip transitionProps={{ transition: 'pop', duration: 300 }} label="Edit">
               <ActionIcon
@@ -46,7 +55,7 @@ export default function MyTable<T>(props: IProps<T>) {
                 radius="md"
                 variant="subtle"
                 component={Link}
-                href={`${baseURL}/${id}/edit`}
+                href={`${baseURL}/${values.id}/edit`}
               >
                 <IconEdit size={22} stroke={1.5} />
               </ActionIcon>
@@ -59,7 +68,7 @@ export default function MyTable<T>(props: IProps<T>) {
                 variant="subtle"
                 color="red"
                 component={Link}
-                href={`${baseURL}/${id}/edit`}
+                href={`${baseURL}/${values.id}/edit`}
               >
                 <IconTrash size={22} stroke={1.5} />
               </ActionIcon>
