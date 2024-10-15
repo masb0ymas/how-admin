@@ -6,6 +6,7 @@ const nextConfig = {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
   env: {
+    APP_PREFIX: process.env.APP_PREFIX,
     API_URL: process.env.API_URL,
     IPFS_API_URL: process.env.IPFS_API_URL,
   },
