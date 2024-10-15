@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { env } from './env'
 
 type AuthProps = {
   email: string
@@ -16,7 +17,7 @@ export type ActionProps = {
 }
 
 export type StateProps = StoreProps & ActionProps
-const keyStorage = `how-admin-state`
+const keyStorage = `${env.APP_PREFIX}-state`
 
 export const useStore = create<StateProps, [['zustand/persist', StateProps]]>(
   persist(

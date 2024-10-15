@@ -2,7 +2,9 @@
 
 import { Avatar, Divider, Group, Menu, rem, Text, UnstyledButton } from '@mantine/core'
 import { IconLockOpen, IconLogout, IconUserCog } from '@tabler/icons-react'
+import _ from 'lodash'
 import Link from 'next/link'
+import useProfile from '~/data/query/useProfile'
 import { getInitialName } from '~/lib/string'
 
 const menuItems = [
@@ -19,7 +21,8 @@ const menuItems = [
 ]
 
 export default function HeaderProfile() {
-  const fullname = 'masb0ymas'
+  const { data } = useProfile()
+  const fullname = _.get(data, 'fullname', '')
 
   return (
     <Menu
@@ -35,7 +38,10 @@ export default function HeaderProfile() {
         <UnstyledButton>
           <Group>
             <Text component="span">
-              Halo, <Text component="span" fw={600}>{fullname}</Text>
+              Halo,{' '}
+              <Text component="span" fw={600}>
+                {fullname}
+              </Text>
             </Text>
             <Avatar color="teal">{getInitialName(fullname)}</Avatar>
           </Group>

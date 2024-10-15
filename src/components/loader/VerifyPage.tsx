@@ -1,8 +1,9 @@
 'use client'
 
 import { Avatar, Center, Stack, Text } from '@mantine/core'
-import { useColorScheme } from '@mantine/hooks'
+import { useLocalStorage } from '@mantine/hooks'
 import cx from 'clsx'
+import { env } from '~/config/env'
 import classes from './partials/Loader.module.css'
 
 type IProps = {
@@ -10,7 +11,10 @@ type IProps = {
 }
 
 export default function VerifyPage(props: IProps) {
-  const colorScheme = useColorScheme()
+  const [colorScheme] = useLocalStorage({
+    key: `${env.APP_PREFIX}-color-scheme`,
+    defaultValue: 'light',
+  })
 
   const logoSource = '/static/logo-how.png'
   const loadingText = 'Loading...'
