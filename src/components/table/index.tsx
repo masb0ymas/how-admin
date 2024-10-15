@@ -148,7 +148,6 @@ export default function MyTable<T>(props: IProps<T>) {
         records={data}
         fetching={isLoading || isFetching}
         pinLastColumn
-        // @ts-expect-error
         columns={defaultColumns}
         selectedRecords={selectedRecords}
         onSelectedRecordsChange={setSelectedRecords}
