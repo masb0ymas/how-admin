@@ -15,15 +15,25 @@ import {
 import { DateTimePicker } from '@mantine/dates'
 import { useForm, zodResolver } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
-import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
+import {
+  IconAlertCircle,
+  IconCalendar,
+  IconCheck,
+  IconLetterT,
+  IconLink,
+  IconSearch,
+  IconUser,
+} from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosRequestConfig } from 'axios'
 import _ from 'lodash'
 import { useParams, useRouter } from 'next/navigation'
+import VerifyPage from '~/components/loader/VerifyPage'
 import MyTitlePage from '~/components/title/MyTitlePage'
 import { useStore } from '~/config/zustand'
 import { WebinarEntity } from '~/data/entity/webinar'
 import useCategory from '~/data/query/category/useCategory'
+import useWebinarById from '~/data/query/webinar/useWebinarById'
 import WebinarRepository from '~/data/repository/webinar'
 import webinarSchema from '~/data/schema/webinar'
 
@@ -89,6 +99,7 @@ function AbstractForm(props: IProps) {
                     placeholder="Title"
                     required
                     radius="md"
+                    leftSection={<IconLetterT size={18} stroke={1.5} />}
                     {...form.getInputProps('title')}
                   />
                 </Grid.Col>
@@ -99,6 +110,7 @@ function AbstractForm(props: IProps) {
                     placeholder="Speakers"
                     required
                     radius="md"
+                    leftSection={<IconUser size={18} stroke={1.5} />}
                     {...form.getInputProps('speakers')}
                   />
                 </Grid.Col>
@@ -107,9 +119,10 @@ function AbstractForm(props: IProps) {
                   <DateTimePicker
                     label="Start Date"
                     placeholder="Start Date"
-                    minDate={new Date()}
                     required
                     radius="md"
+                    minDate={new Date()}
+                    leftSection={<IconCalendar size={18} stroke={1.5} />}
                     {...form.getInputProps('start_date')}
                   />
                 </Grid.Col>
@@ -121,6 +134,7 @@ function AbstractForm(props: IProps) {
                     required
                     radius="md"
                     minDate={!_.isNil(form.values.start_date) ? form.values.start_date : new Date()}
+                    leftSection={<IconCalendar size={18} stroke={1.5} />}
                     {...form.getInputProps('end_date')}
                   />
                 </Grid.Col>
@@ -131,6 +145,7 @@ function AbstractForm(props: IProps) {
                     placeholder="Choose category"
                     data={selectCategory}
                     clearable
+                    leftSection={<IconSearch size={18} stroke={1.5} />}
                     {...form.getInputProps('category_id')}
                   />
                 </Grid.Col>
@@ -140,6 +155,7 @@ function AbstractForm(props: IProps) {
                     label="IPFS CID"
                     placeholder="IPFS CID"
                     radius="md"
+                    leftSection={<IconLink size={18} stroke={1.5} />}
                     {...form.getInputProps('ipfs_cid')}
                   />
                 </Grid.Col>
@@ -149,6 +165,7 @@ function AbstractForm(props: IProps) {
                     label="Link"
                     placeholder="Link"
                     radius="md"
+                    leftSection={<IconLink size={18} stroke={1.5} />}
                     {...form.getInputProps('link')}
                   />
                 </Grid.Col>
@@ -248,6 +265,9 @@ export function FormEdit() {
   const params = useParams<{ id: string }>()
   const id = params.id
 
+  const query = useWebinarById(id)
+  const fetchingData = query.isLoading || query.isFetching
+
   const { auth } = useStore()
   const access_token = _.get(auth, 'access_token', '')
 
@@ -269,16 +289,16 @@ export function FormEdit() {
     },
   })
 
+  if (fetchingData) {
+    return <VerifyPage loading={fetchingData} />
+  }
+
   return (
     <AbstractForm
       initialValues={{
-        title: '',
-        description: '',
-        speakers: '',
-        start_date: '',
-        end_date: '',
-        link: '',
-        ipfs_cid: '',
+        ...query.data,
+        start_date: query?.data?.start_date ? new Date(query?.data?.start_date) : null,
+        end_date: query?.data?.end_date ? new Date(query?.data?.end_date) : null,
         is_active: false,
       }}
       mutation={updateWebinar}

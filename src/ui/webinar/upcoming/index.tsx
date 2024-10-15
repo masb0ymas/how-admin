@@ -2,12 +2,18 @@
 
 import { Button, Group, TextInput } from '@mantine/core'
 import { modals } from '@mantine/modals'
-import { IconPlus, IconSearch } from '@tabler/icons-react'
+import { showNotification } from '@mantine/notifications'
+import { IconCheck, IconPlus, IconSearch } from '@tabler/icons-react'
+import { useMutation } from '@tanstack/react-query'
+import { AxiosRequestConfig } from 'axios'
+import _ from 'lodash'
 import Link from 'next/link'
 import { useState } from 'react'
 import MyTable from '~/components/table'
+import { useStore } from '~/config/zustand'
 import { WebinarEntity } from '~/data/entity/webinar'
 import useWebinar from '~/data/query/webinar/useWebinar'
+import WebinarRepository from '~/data/repository/webinar'
 import { columnWebinar } from '../partials/columnDef'
 import WebinarDetail from '../partials/Detail'
 
@@ -18,6 +24,27 @@ export default function UpcomingTab() {
   const [pageSize] = useState(10)
 
   const baseUrl = '/webinar'
+
+  const { auth } = useStore()
+  const access_token = _.get(auth, 'access_token', '')
+
+  const axiosConfig: AxiosRequestConfig = {
+    headers: { Authorization: `Bearer ${access_token}` },
+  }
+
+  const softDeleteWebinar = useMutation({
+    mutationFn: (id: string) => WebinarRepository.softDelete(id, axiosConfig),
+    onSuccess: (data) => {
+      showNotification({
+        title: 'Success',
+        message: data.message,
+        color: 'green',
+        icon: <IconCheck size={18} stroke={1.5} />,
+      })
+
+      query.refetch()
+    },
+  })
 
   return (
     <>
@@ -41,6 +68,7 @@ export default function UpcomingTab() {
       </Group>
 
       <MyTable<WebinarEntity>
+        baseURL={baseUrl}
         query={query}
         columns={columnWebinar}
         // @ts-expect-error
@@ -56,6 +84,8 @@ export default function UpcomingTab() {
             children: <WebinarDetail data={data} />,
           })
         }}
+        isDeleted
+        mutationDelete={softDeleteWebinar}
       />
     </>
   )
