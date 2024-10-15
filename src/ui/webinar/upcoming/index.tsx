@@ -18,10 +18,18 @@ import { columnWebinar } from '../partials/columnDef'
 import WebinarDetail from '../partials/Detail'
 
 export default function UpcomingTab() {
-  const query = useWebinar()
-
   const [page, setPage] = useState(1)
   const [pageSize] = useState(10)
+
+  const query = useWebinar({
+    query: {
+      defaultValue: {
+        page,
+        pageSize,
+        status: 'upcoming',
+      },
+    },
+  })
 
   const baseUrl = '/webinar'
 
@@ -84,6 +92,7 @@ export default function UpcomingTab() {
             children: <WebinarDetail data={data} />,
           })
         }}
+        isEdited
         isDeleted
         mutationDelete={softDeleteWebinar}
       />
