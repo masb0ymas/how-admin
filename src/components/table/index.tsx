@@ -119,7 +119,7 @@ export default function MyTable<T>(props: IProps<T>) {
             )}
 
             {isDeleted && (
-              <Tooltip transitionProps={{ transition: 'pop', duration: 300 }} label="Edit">
+              <Tooltip transitionProps={{ transition: 'pop', duration: 300 }} label="Delete">
                 <ActionIcon
                   size="md"
                   radius="md"
