@@ -29,8 +29,8 @@ export default function MyTable<T>(props: IProps<T>) {
     columns,
     baseURL,
     showDetail,
-    isEdited = true,
-    isDeleted,
+    isEdited = false,
+    isDeleted = false,
     mutationDelete,
     ...otherProps
   } = props
@@ -89,7 +89,7 @@ export default function MyTable<T>(props: IProps<T>) {
       width: '0%',
       render: (values) => {
         return (
-          <Group gap={4} justify="right" wrap="nowrap">
+          <Group gap={4} justify="center" wrap="nowrap">
             {showDetail?.call && (
               <Tooltip transitionProps={{ transition: 'pop', duration: 300 }} label="Detail">
                 <ActionIcon
@@ -148,6 +148,7 @@ export default function MyTable<T>(props: IProps<T>) {
         records={data}
         fetching={isLoading || isFetching}
         pinLastColumn
+        minHeight={200}
         columns={defaultColumns}
         selectedRecords={selectedRecords}
         onSelectedRecordsChange={setSelectedRecords}
