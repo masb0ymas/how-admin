@@ -1,11 +1,12 @@
 'use client'
 
-import { Stack, Text } from '@mantine/core'
+import { Stack } from '@mantine/core'
 import { IconCalendarTime, IconHistory } from '@tabler/icons-react'
 import { useSearchParams } from 'next/navigation'
 import MyTabs from '~/components/tabs'
 import MyTitlePage from '~/components/title/MyTitlePage'
 import { capitalizeFirstLetter } from '~/lib/string'
+import ArchiveTab from './archive'
 import UpcomingTab from './upcoming'
 
 const tabLists = [
@@ -19,7 +20,7 @@ const tabLists = [
     key: 'archive',
     title: 'Archive',
     icon: IconHistory,
-    children: <Text>Archive</Text>,
+    children: <ArchiveTab />,
   },
 ]
 

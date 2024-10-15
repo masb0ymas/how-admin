@@ -4,6 +4,7 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import axios from 'axios'
 import { env } from '~/config/env'
 import { CategoryEntity } from '~/data/entity/category'
+import useUrlQuery, { UseUrlQueryOptions } from '~/lib/hooks/useUrlQuery'
 
 interface UseResult {
   data: CategoryEntity[]
@@ -13,12 +14,17 @@ interface UseResult {
 type TQueryFnData = UseResult
 type TError = any
 
-export default function useCategory(options?: UseQueryOptions<TQueryFnData, TError>) {
+export default function useCategory(
+  urlOptions?: UseUrlQueryOptions,
+  options?: UseQueryOptions<TQueryFnData, TError>
+) {
+  const endpoint = `${env.API_URL}/v1/category?`
+  const urlQuery = useUrlQuery(urlOptions)
+
   const query = useQuery<TQueryFnData, TError>({
-    queryKey: ['category'],
+    queryKey: urlQuery.transformKey(['category', endpoint]),
     queryFn: async () => {
-      const url = `${env.API_URL}/v1/category`
-      const result = await axios.get(url)
+      const result = await axios.get(urlQuery.transformUrl(endpoint))
       return result.data
     },
     ...options,
