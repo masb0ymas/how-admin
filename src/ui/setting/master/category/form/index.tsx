@@ -116,7 +116,7 @@ export function FormAdd() {
     headers: { Authorization: `Bearer ${access_token}` },
   }
 
-  const postWebinar = useMutation({
+  const postCategory = useMutation({
     mutationFn: (data: CategoryEntity) => CategoryRepository.create(data, axiosConfig),
     onSuccess: (data) => {
       showNotification({
@@ -135,7 +135,7 @@ export function FormAdd() {
       initialValues={{
         name: '',
       }}
-      mutation={postWebinar}
+      mutation={postCategory}
       validate={zodResolver(categorySchema.create)}
     />
   )
@@ -156,7 +156,7 @@ export function FormEdit() {
     headers: { Authorization: `Bearer ${access_token}` },
   }
 
-  const updateWebinar = useMutation({
+  const updateCategory = useMutation({
     mutationFn: (data: CategoryEntity) => CategoryRepository.update(id, data, axiosConfig),
     onSuccess: (data) => {
       showNotification({
@@ -180,7 +180,7 @@ export function FormEdit() {
         ...query.data,
       }}
       isEdit
-      mutation={updateWebinar}
+      mutation={updateCategory}
       validate={zodResolver(categorySchema.create)}
     />
   )

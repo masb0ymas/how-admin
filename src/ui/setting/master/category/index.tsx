@@ -14,8 +14,8 @@ import { useStore } from '~/config/zustand'
 import { CategoryEntity } from '~/data/entity/category'
 import useCategory from '~/data/query/category/useCategory'
 import CategoryRepository from '~/data/repository/category'
-import { columnCategory } from '../partials/columnDef'
-import CategoryDetail from '../partials/Detail'
+import { columnCategory } from './partials/columnDef'
+import CategoryDetail from './partials/Detail'
 
 export default function CategoryTab() {
   const [page, setPage] = useState(1)
@@ -85,7 +85,7 @@ export default function CategoryTab() {
         totalRecords={query.total}
         showDetail={(data) => {
           modals.open({
-            title: data.name,
+            title: 'Detail Category',
             size: 'lg',
             radius: 'lg',
             children: <CategoryDetail data={data} />,
