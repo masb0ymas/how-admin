@@ -36,15 +36,17 @@ import useCategory from '~/data/query/category/useCategory'
 import useWebinarById from '~/data/query/webinar/useWebinarById'
 import WebinarRepository from '~/data/repository/webinar'
 import webinarSchema from '~/data/schema/webinar'
+import { validate } from '~/lib/validate'
 
 type IProps = {
   initialValues: any
   validate: any
   mutation: ReturnType<typeof useMutation<any, any, any, any>>
+  isEdit?: boolean
 }
 
 function AbstractForm(props: IProps) {
-  const { initialValues, validate, mutation } = props
+  const { initialValues, validate, mutation, isEdit } = props
   const router = useRouter()
 
   const queryCategory = useCategory()
@@ -86,7 +88,7 @@ function AbstractForm(props: IProps) {
 
   return (
     <Stack gap={10}>
-      <MyTitlePage title="Add — Webinar" onBack={() => router.back()} />
+      <MyTitlePage title={`${isEdit ? 'Edit' : 'Add'} — Webinar`} onBack={() => router.back()} />
 
       <form onSubmit={form.onSubmit(onFormSubmit)}>
         <Grid columns={12} gutter={32}>
@@ -206,7 +208,7 @@ function AbstractForm(props: IProps) {
               <Divider variant="dashed" my={16} />
 
               <Checkbox
-                defaultChecked
+                checked={form.values.is_active}
                 label="Want to publish this webinar?"
                 {...form.getInputProps('is_active')}
               />
@@ -299,8 +301,9 @@ export function FormEdit() {
         ...query.data,
         start_date: query?.data?.start_date ? new Date(query?.data?.start_date) : null,
         end_date: query?.data?.end_date ? new Date(query?.data?.end_date) : null,
-        is_active: false,
+        is_active: validate.boolean(query?.data?.is_active),
       }}
+      isEdit
       mutation={updateWebinar}
       validate={zodResolver(webinarSchema.create)}
     />

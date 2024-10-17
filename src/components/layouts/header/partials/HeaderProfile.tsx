@@ -1,6 +1,7 @@
 'use client'
 
 import { Avatar, Divider, Group, Menu, rem, Text, UnstyledButton } from '@mantine/core'
+import { useViewportSize } from '@mantine/hooks'
 import { IconLockOpen, IconLogout, IconUserCog } from '@tabler/icons-react'
 import _ from 'lodash'
 import Link from 'next/link'
@@ -23,6 +24,9 @@ const menuItems = [
 export default function HeaderProfile() {
   const { data } = useProfile()
   const fullname = _.get(data, 'fullname', '')
+  const shortname = `${fullname.slice(0, 5)}...`
+
+  const { width } = useViewportSize()
 
   return (
     <Menu
@@ -40,7 +44,7 @@ export default function HeaderProfile() {
             <Text component="span">
               Halo,{' '}
               <Text component="span" fw={600}>
-                {fullname}
+                {width > 480 ? fullname : shortname}
               </Text>
             </Text>
             <Avatar color="teal">{getInitialName(fullname)}</Avatar>
