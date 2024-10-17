@@ -10,5 +10,6 @@ export interface WebinarEntity {
   start_date: string
   end_date: string
   link: string
-  ipfs_cid: string 
+  ipfs_cid: string
+  is_active: boolean
 }
