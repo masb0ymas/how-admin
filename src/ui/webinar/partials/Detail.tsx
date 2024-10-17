@@ -20,6 +20,7 @@ export default function WebinarDetail(props: IProps) {
     { key: 'category.name', title: 'Category', type: ItemType.string },
     { key: 'start_date', title: 'Start Date', type: ItemType.date },
     { key: 'end_date', title: 'End Date', type: ItemType.date },
+    { key: 'is_active', title: 'Active', type: ItemType.boolean },
     { key: 'link', title: 'Link', type: ItemType.link_button },
     { key: 'ipfs_cid', title: 'IPFS CID', type: ItemType.link_button },
     { key: 'description', title: 'Description', type: ItemType.string },
