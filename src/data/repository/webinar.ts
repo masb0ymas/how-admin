@@ -3,6 +3,8 @@ import { env } from '~/config/env'
 import { WebinarEntity } from '../entity/webinar'
 
 export default class WebinarRepository {
+  private static readonly baseURL = `${env.API_URL}/v1/webinar`
+
   /**
    *
    * @param formData
@@ -10,8 +12,7 @@ export default class WebinarRepository {
    * @returns
    */
   public static async create(formData: WebinarEntity, options?: AxiosRequestConfig) {
-    const url = `${env.API_URL}/v1/webinar`
-    const response = await axios.post(url, formData, options)
+    const response = await axios.post(this.baseURL, formData, options)
     return response.data
   }
 
@@ -23,8 +24,7 @@ export default class WebinarRepository {
    * @returns
    */
   public static async update(id: string, formData: WebinarEntity, options?: AxiosRequestConfig) {
-    const url = `${env.API_URL}/v1/webinar/${id}`
-    const response = await axios.put(url, formData, options)
+    const response = await axios.put(`${this.baseURL}/${id}`, formData, options)
     return response.data
   }
 
@@ -35,8 +35,7 @@ export default class WebinarRepository {
    * @returns
    */
   public static async softDelete(id: string, options?: AxiosRequestConfig) {
-    const url = `${env.API_URL}/v1/webinar/soft-delete/${id}`
-    const response = await axios.delete(url, options)
+    const response = await axios.delete(`${this.baseURL}/soft-delete/${id}`, options)
     return response.data
   }
 
@@ -47,8 +46,7 @@ export default class WebinarRepository {
    * @returns
    */
   public static async forceDelete(id: string, options?: AxiosRequestConfig) {
-    const url = `${env.API_URL}/v1/webinar/force-delete/${id}`
-    const response = await axios.delete(url, options)
+    const response = await axios.delete(`${this.baseURL}/force-delete/${id}`, options)
     return response.data
   }
 }
