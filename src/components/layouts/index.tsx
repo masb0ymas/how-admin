@@ -2,7 +2,7 @@
 
 import _ from 'lodash'
 import { useRouter } from 'next/navigation'
-import { PropsWithChildren } from 'react'
+import React, { PropsWithChildren } from 'react'
 import { useStore } from '~/config/zustand'
 import useProfile from '~/data/query/useProfile'
 import VerifyPage from '../loader/VerifyPage'

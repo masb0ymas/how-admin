@@ -13,11 +13,12 @@ export default function useWebinarById(
   id: string,
   options?: UseQueryOptions<TQueryFnData, TError>
 ) {
+  const endpoint = `${env.API_URL}/v1/webinar/${id}`
+
   const query = useQuery<TQueryFnData, TError>({
-    queryKey: ['webinar-by-id', id],
+    queryKey: ['webinar-by-id', endpoint],
     queryFn: async () => {
-      const url = `${env.API_URL}/v1/webinar/${id}`
-      const result = await axios.get(url)
+      const result = await axios.get(endpoint)
       return result.data
     },
     enabled: Boolean(id),

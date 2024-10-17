@@ -1,9 +1,9 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { env } from '~/config/env'
-import { WebinarEntity } from '../entity/webinar'
+import { RoleEntity } from '../entity/role'
 
-export default class WebinarRepository {
-  private static readonly baseURL = `${env.API_URL}/v1/webinar`
+export default class RoleRepository {
+  private static readonly baseURL = `${env.API_URL}/v1/role`
 
   /**
    *
@@ -11,7 +11,7 @@ export default class WebinarRepository {
    * @param options
    * @returns
    */
-  public static async create(formData: WebinarEntity, options?: AxiosRequestConfig) {
+  public static async create(formData: RoleEntity, options?: AxiosRequestConfig) {
     const response = await axios.post(this.baseURL, formData, options)
     return response.data
   }
@@ -23,7 +23,7 @@ export default class WebinarRepository {
    * @param options
    * @returns
    */
-  public static async update(id: string, formData: WebinarEntity, options?: AxiosRequestConfig) {
+  public static async update(id: string, formData: RoleEntity, options?: AxiosRequestConfig) {
     const response = await axios.put(`${this.baseURL}/${id}`, formData, options)
     return response.data
   }

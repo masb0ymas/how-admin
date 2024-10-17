@@ -1,3 +1,5 @@
+'use client'
+
 import { Divider, Stack } from "@mantine/core"
 import Description, { ItemType } from "~/components/description"
 import { CategoryEntity } from "~/data/entity/category"

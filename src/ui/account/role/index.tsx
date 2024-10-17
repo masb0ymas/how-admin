@@ -11,17 +11,17 @@ import Link from 'next/link'
 import { useState } from 'react'
 import MyTable from '~/components/table'
 import { useStore } from '~/config/zustand'
-import { CategoryEntity } from '~/data/entity/category'
-import useCategory from '~/data/query/category/useCategory'
-import CategoryRepository from '~/data/repository/category'
-import { columnCategory } from './partials/columnDef'
-import CategoryDetail from './partials/Detail'
+import { RoleEntity } from '~/data/entity/role'
+import useRole from '~/data/query/role/useRole'
+import RoleRepository from '~/data/repository/role'
+import { columnRole } from './partials/columnDef'
+import RoleDetail from './partials/Detail'
 
-export default function CategoryTab() {
+export default function RoleTab() {
   const [page, setPage] = useState(1)
   const [pageSize] = useState(10)
 
-  const query = useCategory({
+  const query = useRole({
     query: {
       defaultValue: {
         page,
@@ -30,7 +30,7 @@ export default function CategoryTab() {
     },
   })
 
-  const baseUrl = `/setting/master/category`
+  const baseUrl = '/account/role'
 
   const { auth } = useStore()
   const access_token = _.get(auth, 'access_token', '')
@@ -39,8 +39,8 @@ export default function CategoryTab() {
     headers: { Authorization: `Bearer ${access_token}` },
   }
 
-  const softDeleteCategory = useMutation({
-    mutationFn: (id: string) => CategoryRepository.softDelete(id, axiosConfig),
+  const softDeleteRole = useMutation({
+    mutationFn: (id: string) => RoleRepository.softDelete(id, axiosConfig),
     onSuccess: (data) => {
       showNotification({
         title: 'Success',
@@ -74,10 +74,10 @@ export default function CategoryTab() {
         </Button>
       </Group>
 
-      <MyTable<CategoryEntity>
+      <MyTable<RoleEntity>
         baseURL={baseUrl}
         query={query}
-        columns={columnCategory}
+        columns={columnRole}
         // @ts-expect-error
         page={page}
         onPageChange={setPage}
@@ -85,15 +85,15 @@ export default function CategoryTab() {
         totalRecords={query.total}
         showDetail={(data) => {
           modals.open({
-            title: 'Detail Category',
+            title: "Detail Role",
             size: 'lg',
             radius: 'lg',
-            children: <CategoryDetail data={data} />,
+            children: <RoleDetail data={data} />,
           })
         }}
         isEdited
         isDeleted
-        mutationDelete={softDeleteCategory}
+        mutationDelete={softDeleteRole}
       />
     </>
   )

@@ -5,23 +5,20 @@ import axios, { AxiosRequestConfig } from 'axios'
 import _ from 'lodash'
 import { env } from '~/config/env'
 import { useStore } from '~/config/zustand'
-import { ProfileEntity } from '../entity/auth'
+import { RoleEntity } from '~/data/entity/role'
 
-interface UseResult {
-  data: ProfileEntity
-  total: number
-}
-
+type UseResult = RoleEntity
 type TQueryFnData = UseResult
 type TError = any
 
-export default function useProfile(options?: UseQueryOptions<TQueryFnData, TError>) {
+export default function useRoleById(id: string, options?: UseQueryOptions<TQueryFnData, TError>) {
   const { auth } = useStore()
   const access_token = _.get(auth, 'access_token', '')
-  const endpoint = `${env.API_URL}/v1/auth/verify-session`
+
+  const endpoint = `${env.API_URL}/v1/role/${id}`
 
   const query = useQuery<TQueryFnData, TError>({
-    queryKey: ['auth-profile', access_token, endpoint],
+    queryKey: ['role-by-id', endpoint, access_token],
     queryFn: async () => {
       const axiosConfig: AxiosRequestConfig = {
         headers: { Authorization: `Bearer ${access_token}` },
@@ -30,11 +27,13 @@ export default function useProfile(options?: UseQueryOptions<TQueryFnData, TErro
       const result = await axios.get(endpoint, axiosConfig)
       return result.data
     },
+    enabled: Boolean(id),
+    refetchOnWindowFocus: false,
+    select: (res: any) => res?.data,
     ...options,
   })
 
   return {
     ...query,
-    data: query.data?.data,
   }
 }

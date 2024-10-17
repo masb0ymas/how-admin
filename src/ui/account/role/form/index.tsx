@@ -11,10 +11,10 @@ import { useParams, useRouter } from 'next/navigation'
 import VerifyPage from '~/components/loader/VerifyPage'
 import MyTitlePage from '~/components/title/MyTitlePage'
 import { useStore } from '~/config/zustand'
-import { CategoryEntity } from '~/data/entity/category'
-import useCategoryById from '~/data/query/category/useCategoryById'
-import CategoryRepository from '~/data/repository/category'
-import categorySchema from '~/data/schema/category'
+import { RoleEntity } from '~/data/entity/role'
+import useRoleById from '~/data/query/role/useRoleById'
+import RoleRepository from '~/data/repository/role'
+import roleSchema from '~/data/schema/role'
 
 type IProps = {
   initialValues: any
@@ -58,7 +58,7 @@ function AbstractForm(props: IProps) {
 
   return (
     <Stack gap={10}>
-      <MyTitlePage title={`${isEdit ? 'Edit' : 'Add'} — Category`} onBack={() => router.back()} />
+      <MyTitlePage title={`${isEdit ? 'Edit' : 'Add'} — Role`} onBack={() => router.back()} />
 
       <form onSubmit={form.onSubmit(onFormSubmit)}>
         <Grid columns={12} gutter={32}>
@@ -116,8 +116,8 @@ export function FormAdd() {
     headers: { Authorization: `Bearer ${access_token}` },
   }
 
-  const postCategory = useMutation({
-    mutationFn: (data: CategoryEntity) => CategoryRepository.create(data, axiosConfig),
+  const postRole = useMutation({
+    mutationFn: (data: RoleEntity) => RoleRepository.create(data, axiosConfig),
     onSuccess: (data) => {
       showNotification({
         title: 'Success',
@@ -126,7 +126,7 @@ export function FormAdd() {
         icon: <IconCheck size={18} stroke={1.5} />,
       })
 
-      router.push('/setting/master')
+      router.push('/account?tabs=role')
     },
   })
 
@@ -135,8 +135,8 @@ export function FormAdd() {
       initialValues={{
         name: '',
       }}
-      mutation={postCategory}
-      validate={zodResolver(categorySchema.create)}
+      mutation={postRole}
+      validate={zodResolver(roleSchema.create)}
     />
   )
 }
@@ -146,7 +146,7 @@ export function FormEdit() {
   const params = useParams<{ id: string }>()
   const id = params.id
 
-  const query = useCategoryById(id)
+  const query = useRoleById(id)
   const fetchingData = query.isLoading || query.isFetching
 
   const { auth } = useStore()
@@ -156,8 +156,8 @@ export function FormEdit() {
     headers: { Authorization: `Bearer ${access_token}` },
   }
 
-  const updateCategory = useMutation({
-    mutationFn: (data: CategoryEntity) => CategoryRepository.update(id, data, axiosConfig),
+  const updateRole = useMutation({
+    mutationFn: (data: RoleEntity) => RoleRepository.update(id, data, axiosConfig),
     onSuccess: (data) => {
       showNotification({
         title: 'Success',
@@ -166,7 +166,7 @@ export function FormEdit() {
         icon: <IconCheck size={18} stroke={1.5} />,
       })
 
-      router.push('/setting/master')
+      router.push('/account?tabs=role')
     },
   })
 
@@ -180,8 +180,8 @@ export function FormEdit() {
         ...query.data,
       }}
       isEdit
-      mutation={updateCategory}
-      validate={zodResolver(categorySchema.create)}
+      mutation={updateRole}
+      validate={zodResolver(roleSchema.create)}
     />
   )
 }
