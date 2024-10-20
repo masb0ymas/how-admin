@@ -7,6 +7,7 @@ import { DataTableColumn } from 'mantine-datatable'
 import Link from 'next/link'
 import { env } from '~/config/env'
 import { WebinarEntity } from '~/data/entity/webinar'
+import { selectChains } from '~/lib/constant/chain'
 
 export const columnWebinar: DataTableColumn<WebinarEntity>[] = [
   {
@@ -22,6 +23,17 @@ export const columnWebinar: DataTableColumn<WebinarEntity>[] = [
     accessor: 'category.name',
     title: 'Category',
     width: 120,
+  },
+  {
+    accessor: 'chain_id',
+    title: 'Chain',
+    width: 100,
+    render: ({ chain_id }) => {
+      if (chain_id) {
+        return selectChains.find((item) => item.value === chain_id)?.label || '-'
+      }
+      return '-'
+    },
   },
   {
     accessor: 'start_date',

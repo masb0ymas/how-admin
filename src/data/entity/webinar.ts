@@ -12,4 +12,5 @@ export interface WebinarEntity {
   link: string
   ipfs_cid: string
   is_active: boolean
+  chain_id: string
 }

@@ -36,6 +36,7 @@ import useCategory from '~/data/query/category/useCategory'
 import useWebinarById from '~/data/query/webinar/useWebinarById'
 import WebinarRepository from '~/data/repository/webinar'
 import webinarSchema from '~/data/schema/webinar'
+import { selectChains } from '~/lib/constant/chain'
 import { validate } from '~/lib/validate'
 
 type IProps = {
@@ -153,6 +154,17 @@ function AbstractForm(props: IProps) {
                 </Grid.Col>
 
                 <Grid.Col span={6}>
+                  <Select
+                    label="Chain ID"
+                    placeholder="Choose chain"
+                    data={selectChains}
+                    clearable
+                    leftSection={<IconSearch size={18} stroke={1.5} />}
+                    {...form.getInputProps('chain_id')}
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={12}>
                   <TextInput
                     label="IPFS CID"
                     placeholder="IPFS CID"
@@ -249,12 +261,14 @@ export function FormAdd() {
       initialValues={{
         title: '',
         description: '',
+        category_id: '',
         speakers: '',
         start_date: '',
         end_date: '',
         link: '',
         ipfs_cid: '',
         is_active: false,
+        chain_id: '',
       }}
       mutation={postWebinar}
       validate={zodResolver(webinarSchema.create)}
