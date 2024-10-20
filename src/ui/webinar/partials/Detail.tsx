@@ -4,6 +4,7 @@ import { Divider, Stack } from '@mantine/core'
 import Description, { ItemType } from '~/components/description'
 import { env } from '~/config/env'
 import { WebinarEntity } from '~/data/entity/webinar'
+import { selectChains } from '~/lib/constant/chain'
 
 type IProps = {
   data: WebinarEntity
@@ -12,12 +13,18 @@ type IProps = {
 export default function WebinarDetail(props: IProps) {
   const { data } = props
 
-  const newData = { ...data, ipfs_cid: `${env.IPFS_API_URL}/${data.ipfs_cid}` }
+  const chain = selectChains.find((item) => item.value === data.chain_id)
+  const newData = {
+    ...data,
+    ipfs_cid: `${env.IPFS_API_URL}/${data.ipfs_cid}`,
+    chain: chain?.label,
+  }
 
   const details = [
     { key: 'title', title: 'Webinar', type: ItemType.string },
     { key: 'speakers', title: 'Speakers', type: ItemType.string },
     { key: 'category.name', title: 'Category', type: ItemType.string },
+    { key: 'chain', title: 'Chain', type: ItemType.string },
     { key: 'start_date', title: 'Start Date', type: ItemType.date },
     { key: 'end_date', title: 'End Date', type: ItemType.date },
     { key: 'is_active', title: 'Active', type: ItemType.boolean },

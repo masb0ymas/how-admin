@@ -57,6 +57,13 @@ const create = z.object({
     required_error: 'is_active is required',
     invalid_type_error: 'is_active must be a boolean',
   }),
+
+  chain_id: z
+    .string({
+      required_error: 'chain_id is required',
+      invalid_type_error: 'chain_id must be a string',
+    })
+    .min(2, `chain_id can't be empty`),
 })
 
 const webinarSchema = { create }
