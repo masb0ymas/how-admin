@@ -43,15 +43,16 @@ export default function Navbarlink(props: NavbarLinkProps) {
 
           <Menu.Dropdown>
             {links?.map((item) => {
+              const sub_link_active = item.link === pathname
               const matchPath = pathname.match(String(item.link))
-              const is_active = !_.isEmpty(matchPath)
+              const is_active_sub = !_.isEmpty(matchPath) && sub_link_active
 
               return (
                 <Menu.Item
                   leftSection={<item.icon style={{ width: rem(16), height: rem(16) }} />}
                   onClick={() => router.push(String(item.link))}
-                  data-active={is_active}
-                  color={is_active ? 'blue' : undefined}
+                  data-active={is_active_sub}
+                  color={is_active_sub ? 'blue' : undefined}
                   key={item.label}
                 >
                   {item.label}

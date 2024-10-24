@@ -17,9 +17,9 @@ export default function Sidebar() {
   const { data } = queryMenu
 
   const links = data.map((item) => {
-    const links_active = item.links?.find((x) => x.link === pathname)
+    const link_active = item.link === pathname
     const matchPath = pathname.match(String(item.link))
-    const is_active = !_.isEmpty(matchPath) || !_.isEmpty(links_active)
+    const is_active = !_.isEmpty(matchPath) && link_active
 
     return <Navbarlink {...item} key={item.label} active={is_active} link={item.link} />
   })
