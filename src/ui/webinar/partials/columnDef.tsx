@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@mantine/core'
+import { Button, Checkbox } from '@mantine/core'
 import { IconExternalLink } from '@tabler/icons-react'
 import { format } from 'date-fns'
 import { DataTableColumn } from 'mantine-datatable'
@@ -58,15 +58,54 @@ export const columnWebinar: DataTableColumn<WebinarEntity>[] = [
     },
   },
   {
-    accessor: 'link',
-    title: 'Link',
-    render: ({ link }) => {
-      if (link) {
+    accessor: 'is_active',
+    title: 'Active',
+    width: 80,
+    render: ({ is_active }) => {
+      return <Checkbox checked={is_active} label={is_active ? "Yes": "No"} />
+    },
+  },
+  {
+    accessor: 'is_premium',
+    title: 'Premium',
+    width: 80,
+    render: ({ is_premium }) => {
+      return <Checkbox checked={is_premium} label={is_premium ? "Yes": "No"} />
+    },
+  },
+  {
+    accessor: 'webinar_url',
+    title: 'Webinar URL',
+    render: ({ webinar_url }) => {
+      if (webinar_url) {
         return (
           <Button
             variant="subtle"
             component={Link}
-            href={link}
+            href={webinar_url}
+            target="_blank"
+            rel="noreferrer"
+            leftSection={<IconExternalLink size={18} stroke={1.5} />}
+            size="compact-md"
+            radius="md"
+          >
+            view
+          </Button>
+        )
+      }
+      return '-'
+    },
+  },
+  {
+    accessor: 'recording_url',
+    title: 'Recording URL',
+    render: ({ recording_url }) => {
+      if (recording_url) {
+        return (
+          <Button
+            variant="subtle"
+            component={Link}
+            href={recording_url}
             target="_blank"
             rel="noreferrer"
             leftSection={<IconExternalLink size={18} stroke={1.5} />}

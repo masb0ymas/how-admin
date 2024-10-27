@@ -31,7 +31,7 @@ export default function UpcomingTab() {
     },
   })
 
-  const baseUrl = '/webinar'
+  const baseUrl = '/webinar/upcoming'
 
   const { auth } = useStore()
   const access_token = _.get(auth, 'access_token', '')

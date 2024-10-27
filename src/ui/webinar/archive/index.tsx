@@ -24,7 +24,7 @@ export default function ArchiveTab() {
     },
   })
 
-  const baseUrl = '/webinar'
+  const baseUrl = '/webinar/archive'
 
   return (
     <>
@@ -54,6 +54,7 @@ export default function ArchiveTab() {
             children: <WebinarDetail data={data} />,
           })
         }}
+        isEdited
       />
     </>
   )

@@ -28,7 +28,9 @@ export default function WebinarDetail(props: IProps) {
     { key: 'start_date', title: 'Start Date', type: ItemType.date },
     { key: 'end_date', title: 'End Date', type: ItemType.date },
     { key: 'is_active', title: 'Active', type: ItemType.boolean },
-    { key: 'link', title: 'Link', type: ItemType.link_button },
+    { key: 'is_premium', title: 'Premium', type: ItemType.boolean },
+    { key: 'webinar_url', title: 'Webinar URL', type: ItemType.link_button },
+    { key: 'recording_url', title: 'Recording URL', type: ItemType.link_button },
     { key: 'ipfs_cid', title: 'IPFS CID', type: ItemType.link_button },
     { key: 'description', title: 'Description', type: ItemType.string },
   ]
