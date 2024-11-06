@@ -21,7 +21,8 @@ import {
   IconBrandZoom,
   IconCalendar,
   IconCheck,
-  IconLetterT, IconLink,
+  IconLetterT,
+  IconLink,
   IconSearch,
   IconUser,
 } from '@tabler/icons-react'
@@ -31,6 +32,7 @@ import _ from 'lodash'
 import { useParams, useRouter } from 'next/navigation'
 import VerifyPage from '~/components/loader/VerifyPage'
 import MyTitlePage from '~/components/title/MyTitlePage'
+import { env } from '~/config/env'
 import { useStore } from '~/config/zustand'
 import { WebinarEntity } from '~/data/entity/webinar'
 import useCategory from '~/data/query/category/useCategory'
@@ -38,6 +40,7 @@ import useWebinarById from '~/data/query/webinar/useWebinarById'
 import WebinarRepository from '~/data/repository/webinar'
 import webinarSchema from '~/data/schema/webinar'
 import { selectChains } from '~/lib/constant/chain'
+import useUrlQuery from '~/lib/hooks/useUrlQuery'
 import { validate } from '~/lib/validate'
 
 type IProps = {
@@ -253,7 +256,7 @@ type FormWebinarProps = {
   redirect_uri: string
 }
 
-export function FormWebinarAdd({redirect_uri}: FormWebinarProps) {
+export function FormWebinarAdd({ redirect_uri }: FormWebinarProps) {
   const router = useRouter()
 
   const { auth } = useStore()
@@ -299,7 +302,7 @@ export function FormWebinarAdd({redirect_uri}: FormWebinarProps) {
   )
 }
 
-export function FormWebinarEdit({redirect_uri}: FormWebinarProps) {
+export function FormWebinarEdit({ redirect_uri }: FormWebinarProps) {
   const router = useRouter()
   const params = useParams<{ id: string }>()
   const id = params.id

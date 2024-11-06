@@ -51,7 +51,7 @@ const create = z.object({
       required_error: 'recording_url is required',
       invalid_type_error: 'recording_url must be a string',
     })
-    .min(2, `recording_url can't be empty`),
+    .nullable(),
 
   ipfs_cid: z
     .string({
