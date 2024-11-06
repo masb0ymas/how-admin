@@ -11,7 +11,7 @@ export default class AuthRepository {
    * @returns
    */
   public static async signIn(formData: LoginEntity) {
-    const response = await axios.post(`${this.baseURL}/sign-in`, formData)
+    const response = await axios.post(`${this.baseURL}/admin/sign-in`, formData)
     return response.data
   }
 }

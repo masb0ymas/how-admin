@@ -28,6 +28,8 @@ export default function useCategory(
       return result.data
     },
     ...options,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   })
 
   return {

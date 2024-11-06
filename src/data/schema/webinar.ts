@@ -39,12 +39,19 @@ const create = z.object({
     invalid_type_error: 'end_date must be a date',
   }),
 
-  link: z
+  webinar_url: z
     .string({
-      required_error: 'link is required',
-      invalid_type_error: 'link must be a string',
+      required_error: 'webinar_url is required',
+      invalid_type_error: 'webinar_url must be a string',
     })
-    .min(2, `link can't be empty`),
+    .min(2, `webinar_url can't be empty`),
+
+  recording_url: z
+    .string({
+      required_error: 'recording_url is required',
+      invalid_type_error: 'recording_url must be a string',
+    })
+    .nullable(),
 
   ipfs_cid: z
     .string({
@@ -56,6 +63,11 @@ const create = z.object({
   is_active: z.boolean({
     required_error: 'is_active is required',
     invalid_type_error: 'is_active must be a boolean',
+  }),
+
+  is_premium: z.boolean({
+    required_error: 'is_premium is required',
+    invalid_type_error: 'is_premium must be a boolean',
   }),
 
   chain_id: z

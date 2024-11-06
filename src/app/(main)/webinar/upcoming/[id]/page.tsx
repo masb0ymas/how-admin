@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormEdit } from '~/ui/webinar/upcoming/form'
 
-export default function WebinarEditPage() {
+export default function WebinarUpcomingEditPage() {
   return <FormEdit />
 }
