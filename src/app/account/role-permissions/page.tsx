@@ -1,26 +1,19 @@
 import { DataTable } from '~/components/custom/data-table'
-import { columns, Payment } from './columns'
+import { getRoles } from './action'
+import { columns } from './columns'
+import { Metadata } from 'next'
 
-async function getData(): Promise<Payment[]> {
-  // Fetch data from your API here.
-  return [
-    {
-      id: '728ed52f',
-      amount: 100,
-      status: 'pending',
-      email: 'm@example.com',
-    },
-    {
-      id: '489e1d42',
-      amount: 125,
-      status: 'processing',
-      email: 'example@gmail.com',
-    },
-  ]
+export const metadata: Metadata = {
+  title: 'Role Permission',
+  description: 'Account - Role Permission - House of Wizard',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default async function RolePermissionPage() {
-  const data = await getData()
+  const { data } = await getRoles()
 
   return (
     <>
@@ -30,7 +23,7 @@ export default async function RolePermissionPage() {
           <h4 className="text-muted-foreground">You can adjust your role permissions here</h4>
         </div>
 
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={data} baseUrl="/account/role-permissions" />
       </div>
     </>
   )

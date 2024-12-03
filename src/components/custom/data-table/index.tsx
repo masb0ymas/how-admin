@@ -1,6 +1,6 @@
 'use client'
 
-import { IconEye, IconPencil, IconTrash } from '@tabler/icons-react'
+import { IconEye, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react'
 import {
   Cell,
   ColumnDef,
@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-table'
 import _ from 'lodash'
 import { MoreHorizontal } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
@@ -42,6 +43,7 @@ import DataTableViewOptions from './data-table-view-options'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  baseUrl: string
   isEdit?: boolean
   isDelete?: boolean
 }
@@ -49,6 +51,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  baseUrl,
   isEdit = true,
   isDelete = true,
 }: DataTableProps<TData, TValue>) {
@@ -103,22 +106,30 @@ export function DataTable<TData, TValue>({
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={() => console.log(id)}>
-                  <IconEye className="h-4 w-4" />
-                  <span>View</span>
-                </DropdownMenuItem>
+                <Link href={`${baseUrl}/view/${id}`}>
+                  <DropdownMenuItem className="focus:cursor-pointer">
+                    <IconEye className="h-4 w-4" />
+                    <span>View</span>
+                  </DropdownMenuItem>
+                </Link>
 
                 {isEdit && (
-                  <DropdownMenuItem onClick={() => console.log(id)}>
-                    <IconPencil className="h-4 w-4" />
-                    <span>Edit</span>
-                  </DropdownMenuItem>
+                  <Link href={`${baseUrl}/edit/${id}`}>
+                    <DropdownMenuItem className="focus:cursor-pointer">
+                      <IconPencil className="h-4 w-4" />
+                      <span>Edit</span>
+                    </DropdownMenuItem>
+                  </Link>
                 )}
 
                 {isDelete && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-500 focus:font-semibold focus:bg-red-500 focus:text-white">
+
+                    <DropdownMenuItem
+                      className="text-red-500 focus:font-semibold focus:bg-red-500 focus:text-white focus:cursor-pointer"
+                      onClick={() => console.log('Delete', id)}
+                    >
                       <IconTrash className="h-4 w-4" />
                       <span>Delete</span>
                     </DropdownMenuItem>
@@ -162,6 +173,13 @@ export function DataTable<TData, TValue>({
         />
 
         <DataTableViewOptions table={table} />
+
+        <Link href={`${baseUrl}/add`}>
+          <Button className="bg-blue-500 font-semibold hover:bg-blue-500/90">
+            <IconPlus className="h-4 w-4" />
+            <span>Add</span>
+          </Button>
+        </Link>
       </div>
 
       <div className="rounded-md border">
