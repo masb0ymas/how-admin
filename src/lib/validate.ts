@@ -1,5 +1,4 @@
 import { isValid } from 'date-fns'
-import { validate as uuidValidate } from 'uuid'
 import { isNumeric } from './number'
 
 const emptyValues = [null, undefined, '', 'null', 'undefined']
@@ -57,19 +56,5 @@ export class validate {
 
     const valueDate = value instanceof Date ? value : new Date(value)
     return isValid(valueDate)
-  }
-
-  /**
-   *
-   * @param value
-   * @returns
-   */
-  public static uuid(value: string) {
-    if (!uuidValidate(value)) {
-      const message = 'invalid uuid format'
-      throw new Error(message)
-    }
-
-    return value
   }
 }
