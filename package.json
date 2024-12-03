@@ -50,6 +50,7 @@
     "eslint-config-prettier": "^9.1.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
+    "ts-plugin-sort-import-suggestions": "^1.0.4",
     "typescript": "^5"
   }
 }
