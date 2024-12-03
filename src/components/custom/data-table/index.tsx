@@ -106,7 +106,7 @@ export function DataTable<TData, TValue>({
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
-                <Link href={`${baseUrl}/view/${id}`}>
+                <Link href={`${baseUrl}/${id}/view`}>
                   <DropdownMenuItem className="focus:cursor-pointer">
                     <IconEye className="h-4 w-4" />
                     <span>View</span>
@@ -114,7 +114,7 @@ export function DataTable<TData, TValue>({
                 </Link>
 
                 {isEdit && (
-                  <Link href={`${baseUrl}/edit/${id}`}>
+                  <Link href={`${baseUrl}/${id}/edit`}>
                     <DropdownMenuItem className="focus:cursor-pointer">
                       <IconPencil className="h-4 w-4" />
                       <span>Edit</span>
