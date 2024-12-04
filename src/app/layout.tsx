@@ -2,7 +2,7 @@
 import './globals.css'
 
 import type { Metadata } from 'next'
-import AppLayout from '~/components/layout'
+import Provider from '~/lib/provider'
 
 export const metadata: Metadata = {
   title: 'House of Wizard',
@@ -30,12 +30,16 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
+          href="https://fonts.googleapis.com/css2?family=Faculty+Glyphic&display=swap"
+          rel="stylesheet"
+        />
+        <link
           href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
           rel="stylesheet"
         />
       </head>
       <body className={`antialiased`}>
-        <AppLayout>{children}</AppLayout>
+        <Provider>{children}</Provider>
       </body>
     </html>
   )
