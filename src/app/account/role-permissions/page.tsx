@@ -1,5 +1,5 @@
 import { DataTable } from '~/components/custom/data-table'
-import { getRoles } from './action'
+import { findRoles } from './action'
 import { columns } from './columns'
 import { Metadata } from 'next'
 
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function RolePermissionPage() {
-  const { data } = await getRoles()
+  const { data } = await findRoles()
 
   return (
     <>

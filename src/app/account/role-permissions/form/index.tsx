@@ -2,8 +2,9 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconArrowLeft, IconLoader } from '@tabler/icons-react'
+import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '~/components/ui/button'
@@ -19,30 +20,31 @@ import {
 import { Input } from '~/components/ui/input'
 import { Separator } from '~/components/ui/separator'
 import roleSchema from '~/data/schema/role'
+import { createRole, findRole, updateRole } from '../action'
+import { toast } from '~/hooks/use-toast'
+import { RoleEntity } from '~/data/entity/role'
+import Loader from '~/components/custom/loader'
 
 type FormProps = {
-  id?: string
+  initialValues: z.infer<typeof roleSchema.create>
+  mutation: ReturnType<typeof useMutation<any, any, any, any>>
 }
 
-function AbstractForm({ id }: FormProps) {
+function AbstractForm({ initialValues, mutation }: FormProps) {
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof roleSchema.create>>({
     resolver: zodResolver(roleSchema.create),
-    defaultValues: {
-      name: '',
-    },
+    defaultValues: initialValues,
   })
 
-  function onSubmit(data: z.infer<typeof roleSchema.create>) {
+  async function onSubmit(data: z.infer<typeof roleSchema.create>) {
     setIsLoading(true)
-    console.log(data)
+    await mutation.mutateAsync(data)
     setIsLoading(false)
   }
-
-  console.log(id)
 
   return (
     <Form {...form}>
@@ -104,7 +106,20 @@ function AbstractForm({ id }: FormProps) {
 }
 
 export function FormAdd() {
-  return <AbstractForm />
+  const router = useRouter()
+
+  const mutation = useMutation({
+    mutationFn: async (data: z.infer<typeof roleSchema.create>) => await createRole(data),
+    onSuccess: (data) => {
+      toast({
+        title: data.isError ? 'Error' : 'Success',
+        description: data.message,
+      })
+      router.push('/account/role-permissions')
+    },
+  })
+
+  return <AbstractForm initialValues={{ name: '' }} mutation={mutation} />
 }
 
 type FormEditProps = {
@@ -112,5 +127,45 @@ type FormEditProps = {
 }
 
 export function FormEdit({ id }: FormEditProps) {
-  return <AbstractForm id={id} />
+  const router = useRouter()
+
+  const [isLoading, setIsLoading] = useState(true)
+  const [role, setRole] = useState<RoleEntity>({
+    id: '',
+    created_at: '',
+    updated_at: '',
+    deleted_at: null,
+    name: '',
+  })
+
+  const getRole = useCallback(async () => {
+    const { data } = await findRole(id)
+    setRole(data)
+    setIsLoading(false)
+  }, [id])
+
+  useEffect(() => {
+    getRole()
+  }, [id, getRole])
+
+  const mutation = useMutation({
+    mutationFn: async (data: z.infer<typeof roleSchema.create>) => await updateRole(id, data),
+    onSuccess: (data) => {
+      toast({
+        title: data.isError ? 'Error' : 'Success',
+        description: data.message,
+      })
+      router.push('/account/role-permissions')
+    },
+  })
+
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader />
+      </div>
+    )
+  }
+
+  return <AbstractForm initialValues={{ ...role }} mutation={mutation} />
 }
