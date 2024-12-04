@@ -11,7 +11,7 @@ import roleSchema from '~/data/schema/role'
  * @returns
  */
 export async function findRoles() {
-  let data = null
+  let data = []
   let message = null
   let isError = false
 
