@@ -46,6 +46,7 @@ interface DataTableProps<TData, TValue> {
   baseUrl: string
   isEdit?: boolean
   isDelete?: boolean
+  onDelete?: (id: string) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -54,6 +55,7 @@ export function DataTable<TData, TValue>({
   baseUrl,
   isEdit = true,
   isDelete = true,
+  onDelete,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -128,7 +130,7 @@ export function DataTable<TData, TValue>({
 
                     <DropdownMenuItem
                       className="text-red-500 focus:font-semibold focus:bg-red-500 focus:text-white focus:cursor-pointer"
-                      onClick={() => console.log('Delete', id)}
+                      onClick={() => onDelete?.(id)}
                     >
                       <IconTrash className="h-4 w-4" />
                       <span>Delete</span>

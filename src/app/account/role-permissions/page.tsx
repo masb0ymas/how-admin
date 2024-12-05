@@ -1,7 +1,5 @@
-import { DataTable } from '~/components/custom/data-table'
-import { findRoles } from './action'
-import { columns } from './columns'
 import { Metadata } from 'next'
+import RoleTable from './table'
 
 export const metadata: Metadata = {
   title: 'Role Permission',
@@ -13,8 +11,6 @@ export const metadata: Metadata = {
 }
 
 export default async function RolePermissionPage() {
-  const { data } = await findRoles()
-
   return (
     <>
       <div className="container mx-auto pb-10">
@@ -23,7 +19,7 @@ export default async function RolePermissionPage() {
           <h4 className="text-muted-foreground">You can adjust your role permissions here</h4>
         </div>
 
-        <DataTable columns={columns} data={data} baseUrl="/account/role-permissions" />
+        <RoleTable />
       </div>
     </>
   )

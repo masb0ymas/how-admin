@@ -6,7 +6,9 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import { z } from 'zod'
+import Loader from '~/components/custom/loader'
 import { Button } from '~/components/ui/button'
 import {
   Form,
@@ -19,11 +21,9 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Separator } from '~/components/ui/separator'
+import { RoleEntity } from '~/data/entity/role'
 import roleSchema from '~/data/schema/role'
 import { createRole, findRole, updateRole } from '../action'
-import { toast } from '~/hooks/use-toast'
-import { RoleEntity } from '~/data/entity/role'
-import Loader from '~/components/custom/loader'
 
 type FormProps = {
   initialValues: z.infer<typeof roleSchema.create>
@@ -111,10 +111,13 @@ export function FormAdd() {
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof roleSchema.create>) => await createRole(data),
     onSuccess: (data) => {
-      toast({
-        title: data.isError ? 'Error' : 'Success',
-        description: data.message,
-      })
+      if (data.isError) {
+        toast.error(data.message)
+        return
+      } else {
+        toast.success(data.message)
+      }
+
       router.push('/account/role-permissions')
     },
   })
@@ -151,10 +154,13 @@ export function FormEdit({ id }: FormEditProps) {
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof roleSchema.create>) => await updateRole(id, data),
     onSuccess: (data) => {
-      toast({
-        title: data.isError ? 'Error' : 'Success',
-        description: data.message,
-      })
+      if (data.isError) {
+        toast.error(data.message)
+        return
+      } else {
+        toast.success(data.message)
+      }
+
       router.push('/account/role-permissions')
     },
   })
