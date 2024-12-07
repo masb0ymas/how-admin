@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import AppLayout from '~/components/layout'
+import { auth } from '~/lib/auth'
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -10,7 +12,13 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth()
+
+  if (!session?.user) {
+    redirect('/sign-in')
+  }
+
   return (
     <AppLayout>
       <div className="flex flex-1 flex-col gap-4">
