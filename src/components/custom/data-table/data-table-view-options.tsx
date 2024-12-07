@@ -9,6 +9,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
+import { capitalizeFirstLetter } from '~/lib/string'
 
 type IProps<TData> = {
   table: Table<TData>
@@ -35,7 +36,7 @@ export default function DataTableViewOptions<TData>({ table }: IProps<TData>) {
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {capitalizeFirstLetter(column.id)}
               </DropdownMenuCheckboxItem>
             )
           })}
