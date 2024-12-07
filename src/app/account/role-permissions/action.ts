@@ -39,7 +39,7 @@ export async function findRoles() {
  * @param id
  * @returns
  */
-export async function findRole(id: string) {
+export async function findRoleById(id: string) {
   const api = await _axios()
 
   let data = null

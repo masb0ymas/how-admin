@@ -37,7 +37,7 @@ export async function findSessions() {
  * @param id
  * @returns
  */
-export async function findSession(id: string) {
+export async function findSessionById(id: string) {
   const api = await _axios()
 
   let data = null

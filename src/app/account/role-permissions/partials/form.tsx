@@ -23,7 +23,7 @@ import { Input } from '~/components/ui/input'
 import { Separator } from '~/components/ui/separator'
 import { RoleEntity } from '~/data/entity/role'
 import roleSchema from '~/data/schema/role'
-import { createRole, findRole, updateRole } from '../action'
+import { createRole, findRoleById, updateRole } from '../action'
 
 type FormProps = {
   initialValues: z.infer<typeof roleSchema.create>
@@ -142,7 +142,7 @@ export function FormEdit({ id }: FormEditProps) {
   })
 
   const getRole = useCallback(async () => {
-    const { data } = await findRole(id)
+    const { data } = await findRoleById(id)
     setRole(data)
     setIsLoading(false)
   }, [id])
