@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -17,9 +16,13 @@
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "ts-plugin-sort-import-suggestions",
+        "moveUpPatterns": ["@/", "\\.{1,2}/", "~/", "\\.{1,2}/"],
+        "moveDownPatterns": ["@radix-ui", "lucide-react"]
       }
     ],
-    "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
     }
