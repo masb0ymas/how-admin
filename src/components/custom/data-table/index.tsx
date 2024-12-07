@@ -207,7 +207,7 @@ export function DataTable<TData, TValue>({
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell: Cell<TData, TValue>) => (
                     <TableCell key={cell.id}>
-                      {['select', 'actions'].includes(cell.column.id) ? (
+                      {['select', 'actions', 'is_active', 'is_blocked'].includes(cell.column.id) ? (
                         flexRender(cell.column.columnDef.cell, cell.getContext())
                       ) : (
                         <span className="ml-4">

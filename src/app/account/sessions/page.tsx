@@ -4,6 +4,10 @@ import SessionsTable from './partials/table'
 export const metadata: Metadata = {
   title: 'Sessions',
   description: 'Account - Sessions - House of Wizard',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default function SessionsPage() {
