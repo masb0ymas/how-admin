@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import RoleTable from './table'
+import RoleTable from './partials/table'
 
 export const metadata: Metadata = {
   title: 'Role Permission',

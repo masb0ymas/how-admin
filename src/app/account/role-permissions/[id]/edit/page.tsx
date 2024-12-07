@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormEdit } from '../../form'
+import { FormEdit } from '../../partials/form'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {

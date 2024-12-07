@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { FormAdd } from '../form'
+import { FormAdd } from '../partials/form'
 
 export const metadata: Metadata = {
   title: 'Add Role Permission',

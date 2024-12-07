@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 import { DataTable } from '~/components/custom/data-table'
 import Loader from '~/components/custom/loader'
 import { RoleEntity } from '~/data/entity/role'
-import { deleteRole, findRoles } from './action'
+import { deleteRole, findRoles } from '../action'
 import { columns } from './columns'
 
 export default function RoleTable() {
