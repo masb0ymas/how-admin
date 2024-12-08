@@ -1,10 +1,16 @@
 'use server'
 
 import _ from 'lodash'
+import qs from 'qs'
 import { z } from 'zod'
 import { env } from '~/config/env'
 import webinarBatchSchema from '~/data/schema/webinar-batch'
 import createFetchApi from '~/lib/action/fetcher'
+
+type ReqFindWebinarBatches = {
+  page: number
+  pageSize: number
+}
 
 async function _axios() {
   const fetch = await createFetchApi(env.API_URL)
@@ -12,26 +18,30 @@ async function _axios() {
 }
 
 /**
- * Find Categories
+ * Find Webinar Batches
  * @returns
  */
-export async function findWebinarBatches() {
+export async function findWebinarBatches({ page, pageSize }: ReqFindWebinarBatches) {
   const api = await _axios()
 
   let data = []
+  let total = 0
   let message = null
   let isError = false
 
+  const queryParams = qs.stringify({ page, pageSize }, { skipNulls: true })
+
   try {
-    const res = await api.get('/v1/webinar-batch')
+    const res = await api.get(`/v1/webinar-batch?${queryParams}`)
     data = res.data.data
+    total = res.data.total
   } catch (err) {
     console.log(err)
     message = _.get(err, 'response.data.message', 'Something went wrong')
     isError = true
   }
 
-  return { data, message, isError }
+  return { data, total, message, isError }
 }
 
 /**

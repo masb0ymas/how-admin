@@ -11,16 +11,24 @@ import { columns } from './columns'
 export default function WebinarBatchTable() {
   const [isLoading, setIsLoading] = useState(true)
   const [webinarBatches, setWebinarBatches] = useState<WebinarBatchEntity[]>([])
+  const [totalWebinarBatches, setTotalWebinarBatches] = useState(0)
 
-  const getWebinarBatches = useCallback(async () => {
-    const { data } = await findWebinarBatches()
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+
+  const getWebinarBatches = useCallback(async (page: number, pageSize: number) => {
+    const { data, total } = await findWebinarBatches({ page: page + 1, pageSize })
     setWebinarBatches(data)
+    setTotalWebinarBatches(total)
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    getWebinarBatches()
-  }, [getWebinarBatches])
+    getWebinarBatches(pageIndex, pageSize)
+  }, [getWebinarBatches, pageIndex, pageSize])
+
+  const onPageChange = useCallback((page: number) => setPageIndex(page), [])
+  const onPageSizeChange = useCallback((pageSize: number) => setPageSize(pageSize), [])
 
   const onDelete = useCallback(
     async (id: string) => {
@@ -32,9 +40,9 @@ export default function WebinarBatchTable() {
         toast.success(message)
       }
 
-      getWebinarBatches()
+      getWebinarBatches(pageIndex, pageSize)
     },
-    [getWebinarBatches]
+    [getWebinarBatches, pageIndex, pageSize]
   )
 
   if (isLoading) {
@@ -45,8 +53,14 @@ export default function WebinarBatchTable() {
     <DataTable
       columns={columns}
       data={webinarBatches}
+      total={totalWebinarBatches}
       baseUrl="/settings/webinar-batch"
       onDelete={(id) => onDelete(id)}
+      pageSize={pageSize}
+      pageIndex={pageIndex}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      isLoading={isLoading}
     />
   )
 }
