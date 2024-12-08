@@ -47,6 +47,13 @@ interface DataTableProps<TData, TValue> {
   isEdit?: boolean
   isDelete?: boolean
   onDelete?: (id: string) => void
+  total: number
+  pageSize?: number
+  pageIndex?: number
+  onPageChange?: (page: number) => void
+  onPageSizeChange?: (pageSize: number) => void
+  isLoading?: boolean
+  pageSizeOptions?: number[]
 }
 
 export function DataTable<TData, TValue>({
@@ -56,6 +63,13 @@ export function DataTable<TData, TValue>({
   isEdit = true,
   isDelete = true,
   onDelete,
+  total,
+  pageSize,
+  pageIndex,
+  onPageChange,
+  onPageSizeChange,
+  isLoading,
+  pageSizeOptions,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -229,7 +243,16 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      <DataTablePagination table={table} />
+      <DataTablePagination
+        table={table}
+        total={total}
+        pageSize={pageSize}
+        pageIndex={pageIndex}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+        isLoading={isLoading}
+        pageSizeOptions={pageSizeOptions}
+      />
     </div>
   )
 }
