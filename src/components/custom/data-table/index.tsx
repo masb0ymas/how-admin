@@ -37,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table'
+import Loader from '../loader'
 import DataTablePagination from './data-table-pagination'
 import DataTableViewOptions from './data-table-view-options'
 
@@ -47,6 +48,13 @@ interface DataTableProps<TData, TValue> {
   isEdit?: boolean
   isDelete?: boolean
   onDelete?: (id: string) => void
+  total: number
+  pageSize?: number
+  pageIndex?: number
+  onPageChange?: (page: number) => void
+  onPageSizeChange?: (pageSize: number) => void
+  isLoading?: boolean
+  pageSizeOptions?: number[]
 }
 
 export function DataTable<TData, TValue>({
@@ -56,6 +64,13 @@ export function DataTable<TData, TValue>({
   isEdit = true,
   isDelete = true,
   onDelete,
+  total,
+  pageSize,
+  pageIndex,
+  onPageChange,
+  onPageSizeChange,
+  isLoading,
+  pageSizeOptions,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -164,6 +179,60 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  function renderTableHeader() {
+    return table.getHeaderGroups().map((headerGroup) => (
+      <TableRow key={headerGroup.id}>
+        {headerGroup.headers.map((header) => {
+          return (
+            <TableHead key={header.id}>
+              {header.isPlaceholder
+                ? null
+                : flexRender(header.column.columnDef.header, header.getContext())}
+            </TableHead>
+          )
+        })}
+      </TableRow>
+    ))
+  }
+
+  function renderTableBody() {
+    if (isLoading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length + 2} className="h-24 text-center">
+            <Loader label="Fetching data..." />
+          </TableCell>
+        </TableRow>
+      )
+    }
+
+    if (table.getRowModel().rows?.length > 0) {
+      return table.getRowModel().rows.map((row) => (
+        <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+          {row.getVisibleCells().map((cell: Cell<TData, TValue>) => (
+            <TableCell key={cell.id}>
+              {['select', 'actions', 'is_active', 'is_blocked'].includes(cell.column.id) ? (
+                flexRender(cell.column.columnDef.cell, cell.getContext())
+              ) : (
+                <span className="ml-4">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </span>
+              )}
+            </TableCell>
+          ))}
+        </TableRow>
+      ))
+    }
+
+    return (
+      <TableRow>
+        <TableCell colSpan={columns.length + 2} className="h-24 text-center">
+          No results.
+        </TableCell>
+      </TableRow>
+    )
+  }
+
   return (
     <div>
       <div className="flex gap-2 items-center py-4">
@@ -186,50 +255,21 @@ export function DataTable<TData, TValue>({
 
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell: Cell<TData, TValue>) => (
-                    <TableCell key={cell.id}>
-                      {['select', 'actions', 'is_active', 'is_blocked'].includes(cell.column.id) ? (
-                        flexRender(cell.column.columnDef.cell, cell.getContext())
-                      ) : (
-                        <span className="ml-4">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </span>
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length + 2} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          <TableHeader>{renderTableHeader()}</TableHeader>
+          <TableBody>{renderTableBody()}</TableBody>
         </Table>
       </div>
 
-      <DataTablePagination table={table} />
+      <DataTablePagination
+        table={table}
+        total={total}
+        pageSize={pageSize}
+        pageIndex={pageIndex}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+        isLoading={isLoading}
+        pageSizeOptions={pageSizeOptions}
+      />
     </div>
   )
 }

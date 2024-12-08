@@ -1,17 +1,17 @@
 'use client'
 
 import {
-  IconApps,
   IconBinaryTree,
+  IconCategory,
   IconChartAreaLine,
   IconContract,
-  IconDatabaseCog,
   IconDeviceAnalytics,
   IconHistory,
   IconHome2,
   IconNotebook,
   IconPictureInPictureTop,
   IconSettings,
+  IconTableShare,
   IconUser,
   IconUsers,
   IconVideo,
@@ -92,14 +92,14 @@ export const sidebarMenu = {
       icon: IconSettings,
       items: [
         {
-          title: 'General',
-          url: '/settings/general',
-          icon: IconDatabaseCog,
+          title: 'Category',
+          url: '/settings/category',
+          icon: IconCategory,
         },
         {
-          title: 'Application',
-          url: '/settings/application',
-          icon: IconApps,
+          title: 'Webinar Batch',
+          url: '/settings/webinar-batch',
+          icon: IconTableShare,
         },
       ],
     },

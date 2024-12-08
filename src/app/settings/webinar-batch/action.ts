@@ -4,10 +4,10 @@ import _ from 'lodash'
 import qs from 'qs'
 import { z } from 'zod'
 import { env } from '~/config/env'
-import roleSchema from '~/data/schema/role'
+import webinarBatchSchema from '~/data/schema/webinar-batch'
 import createFetchApi from '~/lib/action/fetcher'
 
-type ReqFindRoles = {
+type ReqFindWebinarBatches = {
   page: number
   pageSize: number
 }
@@ -18,11 +18,10 @@ async function _axios() {
 }
 
 /**
- * Find Roles
- * @param data
+ * Find Webinar Batches
  * @returns
  */
-export async function findRoles({ page, pageSize }: ReqFindRoles) {
+export async function findWebinarBatches({ page, pageSize }: ReqFindWebinarBatches) {
   const api = await _axios()
 
   let data = []
@@ -33,7 +32,7 @@ export async function findRoles({ page, pageSize }: ReqFindRoles) {
   const queryParams = qs.stringify({ page, pageSize }, { skipNulls: true })
 
   try {
-    const res = await api.get(`/v1/role?${queryParams}`)
+    const res = await api.get(`/v1/webinar-batch?${queryParams}`)
     data = res.data.data
     total = res.data.total
   } catch (err) {
@@ -46,11 +45,11 @@ export async function findRoles({ page, pageSize }: ReqFindRoles) {
 }
 
 /**
- * Find Role
+ * Find Webinar Batch
  * @param id
  * @returns
  */
-export async function findRoleById(id: string) {
+export async function findWebinarBatchById(id: string) {
   const api = await _axios()
 
   let data = null
@@ -58,7 +57,7 @@ export async function findRoleById(id: string) {
   let isError = false
 
   try {
-    const res = await api.get(`/v1/role/${id}`)
+    const res = await api.get(`/v1/webinar-batch/${id}`)
     data = res.data.data
   } catch (err) {
     console.log(err)
@@ -70,18 +69,18 @@ export async function findRoleById(id: string) {
 }
 
 /**
- * Create Role
+ * Create Webinar Batch
  * @param data
  * @returns
  */
-export async function createRole(data: z.infer<typeof roleSchema.create>) {
+export async function createWebinarBatch(data: z.infer<typeof webinarBatchSchema.create>) {
   const api = await _axios()
 
   let message = null
   let isError = false
 
   try {
-    const res = await api.post('/v1/role', data)
+    const res = await api.post('/v1/webinar-batch', data)
     message = res.data.message
   } catch (err) {
     console.log(err)
@@ -93,19 +92,22 @@ export async function createRole(data: z.infer<typeof roleSchema.create>) {
 }
 
 /**
- * Update Role
+ * Update Webinar Batch
  * @param id
  * @param data
  * @returns
  */
-export async function updateRole(id: string, data: z.infer<typeof roleSchema.create>) {
+export async function updateWebinarBatch(
+  id: string,
+  data: z.infer<typeof webinarBatchSchema.create>
+) {
   const api = await _axios()
 
   let message = null
   let isError = false
 
   try {
-    const res = await api.put(`/v1/role/${id}`, data)
+    const res = await api.put(`/v1/webinar-batch/${id}`, data)
     message = res.data.message
   } catch (err) {
     console.log(err)
@@ -117,18 +119,18 @@ export async function updateRole(id: string, data: z.infer<typeof roleSchema.cre
 }
 
 /**
- * Delete Role
+ * Delete Webinar Batch
  * @param id
  * @returns
  */
-export async function deleteRole(id: string) {
+export async function deleteWebinarBatch(id: string) {
   const api = await _axios()
 
   let message = null
   let isError = false
 
   try {
-    const res = await api.delete(`/v1/role/soft-delete/${id}`)
+    const res = await api.delete(`/v1/webinar-batch/soft-delete/${id}`)
     message = res.data.message
   } catch (err) {
     console.log(err)

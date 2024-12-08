@@ -21,12 +21,12 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Separator } from '~/components/ui/separator'
-import { RoleEntity } from '~/data/entity/role'
-import roleSchema from '~/data/schema/role'
-import { createRole, findRoleById, updateRole } from '../action'
+import { CategoryEntity } from '~/data/entity/category'
+import categorySchema from '~/data/schema/category'
+import { createCategory, findCategoryById, updateCategory } from '../action'
 
 type FormProps = {
-  initialValues: z.infer<typeof roleSchema.create>
+  initialValues: z.infer<typeof categorySchema.create>
   mutation: ReturnType<typeof useMutation<any, any, any, any>>
 }
 
@@ -35,12 +35,12 @@ function AbstractForm({ initialValues, mutation }: FormProps) {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const form = useForm<z.infer<typeof roleSchema.create>>({
-    resolver: zodResolver(roleSchema.create),
+  const form = useForm<z.infer<typeof categorySchema.create>>({
+    resolver: zodResolver(categorySchema.create),
     defaultValues: initialValues,
   })
 
-  async function onSubmit(data: z.infer<typeof roleSchema.create>) {
+  async function onSubmit(data: z.infer<typeof categorySchema.create>) {
     setIsLoading(true)
     await mutation.mutateAsync(data)
     setIsLoading(false)
@@ -58,7 +58,7 @@ function AbstractForm({ initialValues, mutation }: FormProps) {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Input your role name" {...field} />
+                    <Input placeholder="Input your category name" {...field} />
                   </FormControl>
 
                   {fieldState.error && (
@@ -109,7 +109,7 @@ export function FormAdd() {
   const router = useRouter()
 
   const mutation = useMutation({
-    mutationFn: async (data: z.infer<typeof roleSchema.create>) => await createRole(data),
+    mutationFn: async (data: z.infer<typeof categorySchema.create>) => await createCategory(data),
     onSuccess: (data) => {
       if (data.isError) {
         toast.error(data.message)
@@ -118,7 +118,7 @@ export function FormAdd() {
         toast.success(data.message)
       }
 
-      router.push('/account/role-permissions')
+      router.push('/settings/category')
     },
   })
 
@@ -133,7 +133,7 @@ export function FormEdit({ id }: FormEditProps) {
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState(true)
-  const [role, setRole] = useState<RoleEntity>({
+  const [category, setCategory] = useState<CategoryEntity>({
     id: '',
     created_at: '',
     updated_at: '',
@@ -142,8 +142,8 @@ export function FormEdit({ id }: FormEditProps) {
   })
 
   const getRole = useCallback(async () => {
-    const { data } = await findRoleById(id)
-    setRole(data)
+    const { data } = await findCategoryById(id)
+    setCategory(data)
     setIsLoading(false)
   }, [id])
 
@@ -152,7 +152,8 @@ export function FormEdit({ id }: FormEditProps) {
   }, [id, getRole])
 
   const mutation = useMutation({
-    mutationFn: async (data: z.infer<typeof roleSchema.create>) => await updateRole(id, data),
+    mutationFn: async (data: z.infer<typeof categorySchema.create>) =>
+      await updateCategory(id, data),
     onSuccess: (data) => {
       if (data.isError) {
         toast.error(data.message)
@@ -161,7 +162,7 @@ export function FormEdit({ id }: FormEditProps) {
         toast.success(data.message)
       }
 
-      router.push('/account/role-permissions')
+      router.push('/settings/category')
     },
   })
 
@@ -173,5 +174,5 @@ export function FormEdit({ id }: FormEditProps) {
     )
   }
 
-  return <AbstractForm initialValues={{ ...role }} mutation={mutation} />
+  return <AbstractForm initialValues={{ ...category }} mutation={mutation} />
 }

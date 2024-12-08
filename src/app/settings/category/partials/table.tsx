@@ -4,35 +4,35 @@ import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { DataTable } from '~/components/custom/data-table'
 import Loader from '~/components/custom/loader'
-import { RoleEntity } from '~/data/entity/role'
-import { deleteRole, findRoles } from '../action'
+import { CategoryEntity } from '~/data/entity/category'
+import { deleteCategory, findCategories } from '../action'
 import { columns } from './columns'
 
-export default function RoleTable() {
+export default function CategoryTable() {
   const [isLoading, setIsLoading] = useState(true)
-  const [roles, setRoles] = useState<RoleEntity[]>([])
-  const [totalRoles, setTotalRoles] = useState(0)
+  const [categories, setCategories] = useState<CategoryEntity[]>([])
+  const [totalCategories, setTotalCategories] = useState(0)
 
   const [pageIndex, setPageIndex] = useState(0)
   const [pageSize, setPageSize] = useState(10)
 
-  const getRoles = useCallback(async (page: number, pageSize: number) => {
-    const { data, total } = await findRoles({ page: page + 1, pageSize })
-    setRoles(data)
-    setTotalRoles(total)
+  const getCategories = useCallback(async (page: number, pageSize: number) => {
+    const { data, total } = await findCategories({ page: page + 1, pageSize })
+    setCategories(data)
+    setTotalCategories(total)
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    getRoles(pageIndex, pageSize)
-  }, [getRoles, pageIndex, pageSize])
+    getCategories(pageIndex, pageSize)
+  }, [getCategories, pageIndex, pageSize])
 
   const onPageChange = useCallback((page: number) => setPageIndex(page), [])
   const onPageSizeChange = useCallback((pageSize: number) => setPageSize(pageSize), [])
 
   const onDelete = useCallback(
     async (id: string) => {
-      const { message, isError } = await deleteRole(id)
+      const { message, isError } = await deleteCategory(id)
 
       if (isError) {
         toast.error(message)
@@ -40,9 +40,9 @@ export default function RoleTable() {
         toast.success(message)
       }
 
-      getRoles(pageIndex, pageSize)
+      getCategories(pageIndex, pageSize)
     },
-    [getRoles, pageIndex, pageSize]
+    [getCategories, pageIndex, pageSize]
   )
 
   if (isLoading) {
@@ -52,9 +52,9 @@ export default function RoleTable() {
   return (
     <DataTable
       columns={columns}
-      data={roles}
-      total={totalRoles}
-      baseUrl="/account/role-permissions"
+      data={categories}
+      total={totalCategories}
+      baseUrl="/settings/category"
       onDelete={(id) => onDelete(id)}
       pageSize={pageSize}
       pageIndex={pageIndex}
