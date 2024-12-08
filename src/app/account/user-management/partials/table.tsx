@@ -10,16 +10,24 @@ import { columns } from './columns'
 export default function UsersTable() {
   const [isLoading, setIsLoading] = useState(true)
   const [users, setUsers] = useState<UserEntity[]>([])
+  const [totalUsers, setTotalUsers] = useState(0)
 
-  const getUsers = useCallback(async () => {
-    const { data } = await findUsers()
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+
+  const getUsers = useCallback(async (page: number, pageSize: number) => {
+    const { data, total } = await findUsers({ page: page + 1, pageSize })
     setUsers(data)
+    setTotalUsers(total)
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    getUsers()
-  }, [getUsers])
+    getUsers(pageIndex, pageSize)
+  }, [getUsers, pageIndex, pageSize])
+
+  const onPageChange = useCallback((page: number) => setPageIndex(page), [])
+  const onPageSizeChange = useCallback((pageSize: number) => setPageSize(pageSize), [])
 
   if (isLoading) {
     return <Loader />
@@ -29,9 +37,15 @@ export default function UsersTable() {
     <DataTable
       columns={columns}
       data={users}
+      total={totalUsers}
       baseUrl="/account/user-management"
       isEdit={false}
       isDelete={false}
+      pageSize={pageSize}
+      pageIndex={pageIndex}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      isLoading={isLoading}
     />
   )
 }
