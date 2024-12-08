@@ -37,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table'
+import Loader from '../loader'
 import DataTablePagination from './data-table-pagination'
 import DataTableViewOptions from './data-table-view-options'
 
@@ -178,6 +179,60 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  function renderTableHeader() {
+    return table.getHeaderGroups().map((headerGroup) => (
+      <TableRow key={headerGroup.id}>
+        {headerGroup.headers.map((header) => {
+          return (
+            <TableHead key={header.id}>
+              {header.isPlaceholder
+                ? null
+                : flexRender(header.column.columnDef.header, header.getContext())}
+            </TableHead>
+          )
+        })}
+      </TableRow>
+    ))
+  }
+
+  function renderTableBody() {
+    if (isLoading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length + 2} className="h-24 text-center">
+            <Loader label="Fetching data..." />
+          </TableCell>
+        </TableRow>
+      )
+    }
+
+    if (table.getRowModel().rows?.length > 0) {
+      return table.getRowModel().rows.map((row) => (
+        <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+          {row.getVisibleCells().map((cell: Cell<TData, TValue>) => (
+            <TableCell key={cell.id}>
+              {['select', 'actions', 'is_active', 'is_blocked'].includes(cell.column.id) ? (
+                flexRender(cell.column.columnDef.cell, cell.getContext())
+              ) : (
+                <span className="ml-4">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </span>
+              )}
+            </TableCell>
+          ))}
+        </TableRow>
+      ))
+    }
+
+    return (
+      <TableRow>
+        <TableCell colSpan={columns.length + 2} className="h-24 text-center">
+          No results.
+        </TableCell>
+      </TableRow>
+    )
+  }
+
   return (
     <div>
       <div className="flex gap-2 items-center py-4">
@@ -200,46 +255,8 @@ export function DataTable<TData, TValue>({
 
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell: Cell<TData, TValue>) => (
-                    <TableCell key={cell.id}>
-                      {['select', 'actions', 'is_active', 'is_blocked'].includes(cell.column.id) ? (
-                        flexRender(cell.column.columnDef.cell, cell.getContext())
-                      ) : (
-                        <span className="ml-4">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </span>
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length + 2} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          <TableHeader>{renderTableHeader()}</TableHeader>
+          <TableBody>{renderTableBody()}</TableBody>
         </Table>
       </div>
 
