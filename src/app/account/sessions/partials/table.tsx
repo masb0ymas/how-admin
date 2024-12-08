@@ -10,16 +10,24 @@ import { columns } from './columns'
 export default function SessionsTable() {
   const [isLoading, setIsLoading] = useState(true)
   const [sessions, setSessions] = useState<SessionEntity[]>([])
+  const [totalSessions, setTotalSessions] = useState(0)
 
-  const getSessions = useCallback(async () => {
-    const { data } = await findSessions()
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+
+  const getSessions = useCallback(async (page: number, pageSize: number) => {
+    const { data, total } = await findSessions({ page: page + 1, pageSize })
     setSessions(data)
+    setTotalSessions(total)
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    getSessions()
-  }, [getSessions])
+    getSessions(pageIndex, pageSize)
+  }, [getSessions, pageIndex, pageSize])
+
+  const onPageChange = useCallback((page: number) => setPageIndex(page), [])
+  const onPageSizeChange = useCallback((pageSize: number) => setPageSize(pageSize), [])
 
   if (isLoading) {
     return <Loader />
@@ -29,9 +37,15 @@ export default function SessionsTable() {
     <DataTable
       columns={columns}
       data={sessions}
+      total={totalSessions}
       baseUrl="/account/sessions"
       isEdit={false}
       isDelete={false}
+      pageSize={pageSize}
+      pageIndex={pageIndex}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      isLoading={isLoading}
     />
   )
 }
