@@ -11,7 +11,7 @@ import { z } from 'zod'
 import Loader from '~/components/custom/loader'
 import { Button } from '~/components/ui/button'
 import { CalendarInput } from '~/components/ui/calendar-input'
-import { Checkbox } from '~/components/ui/checkbox'
+import CheckboxInput from '~/components/ui/checkbox-input'
 import {
   Form,
   FormControl,
@@ -140,19 +140,11 @@ function AbstractForm({ initialValues, mutation }: FormProps) {
                   <FormItem className="flex flex-col space-y-3">
                     <FormLabel>Status</FormLabel>
                     <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="is_active"
-                          checked={field.value}
-                          onCheckedChange={(val) => field.onChange(val)}
-                        />
-                        <label
-                          htmlFor="is_active"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Active this webinar batch
-                        </label>
-                      </div>
+                      <CheckboxInput
+                        label="Set active this webinar batch"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -282,5 +274,15 @@ export function FormEdit({ id }: FormEditProps) {
     )
   }
 
-  return <AbstractForm initialValues={{ ...webinarBatch }} mutation={mutation} />
+  return (
+    <AbstractForm
+      initialValues={{
+        ...webinarBatch,
+        start_date: new Date(webinarBatch.start_date),
+        end_date: new Date(webinarBatch.end_date),
+        batch: String(webinarBatch.batch),
+      }}
+      mutation={mutation}
+    />
+  )
 }
