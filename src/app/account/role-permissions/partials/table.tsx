@@ -11,16 +11,24 @@ import { columns } from './columns'
 export default function RoleTable() {
   const [isLoading, setIsLoading] = useState(true)
   const [roles, setRoles] = useState<RoleEntity[]>([])
+  const [totalRoles, setTotalRoles] = useState(0)
 
-  const getRoles = useCallback(async () => {
-    const { data } = await findRoles()
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+
+  const getRoles = useCallback(async (page: number, pageSize: number) => {
+    const { data, total } = await findRoles({ page: page + 1, pageSize })
     setRoles(data)
+    setTotalRoles(total)
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    getRoles()
-  }, [getRoles])
+    getRoles(pageIndex, pageSize)
+  }, [getRoles, pageIndex, pageSize])
+
+  const onPageChange = useCallback((page: number) => setPageIndex(page), [])
+  const onPageSizeChange = useCallback((pageSize: number) => setPageSize(pageSize), [])
 
   const onDelete = useCallback(
     async (id: string) => {
@@ -32,9 +40,9 @@ export default function RoleTable() {
         toast.success(message)
       }
 
-      getRoles()
+      getRoles(pageIndex, pageSize)
     },
-    [getRoles]
+    [getRoles, pageIndex, pageSize]
   )
 
   if (isLoading) {
@@ -45,8 +53,14 @@ export default function RoleTable() {
     <DataTable
       columns={columns}
       data={roles}
+      total={totalRoles}
       baseUrl="/account/role-permissions"
       onDelete={(id) => onDelete(id)}
+      pageSize={pageSize}
+      pageIndex={pageIndex}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      isLoading={isLoading}
     />
   )
 }
