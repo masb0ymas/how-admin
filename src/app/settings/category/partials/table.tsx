@@ -1,26 +1,34 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { DataTable } from '~/components/custom/data-table'
 import Loader from '~/components/custom/loader'
 import { CategoryEntity } from '~/data/entity/category'
 import { deleteCategory, findCategories } from '../action'
 import { columns } from './columns'
-import toast from 'react-hot-toast'
 
 export default function CategoryTable() {
   const [isLoading, setIsLoading] = useState(true)
   const [categories, setCategories] = useState<CategoryEntity[]>([])
+  const [totalCategories, setTotalCategories] = useState(0)
 
-  const getCategories = useCallback(async () => {
-    const { data } = await findCategories()
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+
+  const getCategories = useCallback(async (page: number, pageSize: number) => {
+    const { data, total } = await findCategories({ page: page + 1, pageSize })
     setCategories(data)
+    setTotalCategories(total)
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    getCategories()
-  }, [getCategories])
+    getCategories(pageIndex, pageSize)
+  }, [getCategories, pageIndex, pageSize])
+
+  const onPageChange = useCallback((page: number) => setPageIndex(page), [])
+  const onPageSizeChange = useCallback((pageSize: number) => setPageSize(pageSize), [])
 
   const onDelete = useCallback(
     async (id: string) => {
@@ -32,9 +40,9 @@ export default function CategoryTable() {
         toast.success(message)
       }
 
-      getCategories()
+      getCategories(pageIndex, pageSize)
     },
-    [getCategories]
+    [getCategories, pageIndex, pageSize]
   )
 
   if (isLoading) {
@@ -45,8 +53,14 @@ export default function CategoryTable() {
     <DataTable
       columns={columns}
       data={categories}
+      total={totalCategories}
       baseUrl="/settings/category"
       onDelete={(id) => onDelete(id)}
+      pageSize={pageSize}
+      pageIndex={pageIndex}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      isLoading={isLoading}
     />
   )
 }
