@@ -10,6 +10,8 @@ import { columns } from './columns'
 
 export default function WebinarBatchTable() {
   const [isLoading, setIsLoading] = useState(true)
+  const [isFetching, setIsFetching] = useState(true)
+
   const [webinarBatches, setWebinarBatches] = useState<WebinarBatchEntity[]>([])
   const [totalWebinarBatches, setTotalWebinarBatches] = useState(0)
 
@@ -17,10 +19,14 @@ export default function WebinarBatchTable() {
   const [pageSize, setPageSize] = useState(10)
 
   const getWebinarBatches = useCallback(async (page: number, pageSize: number) => {
+    setIsFetching(true)
+
     const { data, total } = await findWebinarBatches({ page: page + 1, pageSize })
     setWebinarBatches(data)
     setTotalWebinarBatches(total)
+
     setIsLoading(false)
+    setIsFetching(false)
   }, [])
 
   useEffect(() => {
@@ -60,7 +66,7 @@ export default function WebinarBatchTable() {
       pageIndex={pageIndex}
       onPageChange={onPageChange}
       onPageSizeChange={onPageSizeChange}
-      isLoading={isLoading}
+      isLoading={isFetching}
     />
   )
 }

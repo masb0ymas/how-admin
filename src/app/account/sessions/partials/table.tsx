@@ -9,6 +9,8 @@ import { columns } from './columns'
 
 export default function SessionsTable() {
   const [isLoading, setIsLoading] = useState(true)
+  const [isFetching, setIsFetching] = useState(true)
+
   const [sessions, setSessions] = useState<SessionEntity[]>([])
   const [totalSessions, setTotalSessions] = useState(0)
 
@@ -16,10 +18,14 @@ export default function SessionsTable() {
   const [pageSize, setPageSize] = useState(10)
 
   const getSessions = useCallback(async (page: number, pageSize: number) => {
+    setIsFetching(true)
+
     const { data, total } = await findSessions({ page: page + 1, pageSize })
     setSessions(data)
     setTotalSessions(total)
+
     setIsLoading(false)
+    setIsFetching(false)
   }, [])
 
   useEffect(() => {
@@ -45,7 +51,7 @@ export default function SessionsTable() {
       pageIndex={pageIndex}
       onPageChange={onPageChange}
       onPageSizeChange={onPageSizeChange}
-      isLoading={isLoading}
+      isLoading={isFetching}
     />
   )
 }

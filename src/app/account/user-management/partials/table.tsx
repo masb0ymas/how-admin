@@ -9,6 +9,8 @@ import { columns } from './columns'
 
 export default function UsersTable() {
   const [isLoading, setIsLoading] = useState(true)
+  const [isFetching, setIsFetching] = useState(true)
+
   const [users, setUsers] = useState<UserEntity[]>([])
   const [totalUsers, setTotalUsers] = useState(0)
 
@@ -16,10 +18,14 @@ export default function UsersTable() {
   const [pageSize, setPageSize] = useState(10)
 
   const getUsers = useCallback(async (page: number, pageSize: number) => {
+    setIsFetching(true)
+
     const { data, total } = await findUsers({ page: page + 1, pageSize })
     setUsers(data)
     setTotalUsers(total)
+
     setIsLoading(false)
+    setIsFetching(false)
   }, [])
 
   useEffect(() => {
@@ -45,7 +51,7 @@ export default function UsersTable() {
       pageIndex={pageIndex}
       onPageChange={onPageChange}
       onPageSizeChange={onPageSizeChange}
-      isLoading={isLoading}
+      isLoading={isFetching}
     />
   )
 }

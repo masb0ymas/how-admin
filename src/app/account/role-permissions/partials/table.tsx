@@ -10,6 +10,8 @@ import { columns } from './columns'
 
 export default function RoleTable() {
   const [isLoading, setIsLoading] = useState(true)
+  const [isFetching, setIsFetching] = useState(true)
+
   const [roles, setRoles] = useState<RoleEntity[]>([])
   const [totalRoles, setTotalRoles] = useState(0)
 
@@ -17,10 +19,14 @@ export default function RoleTable() {
   const [pageSize, setPageSize] = useState(10)
 
   const getRoles = useCallback(async (page: number, pageSize: number) => {
+    setIsFetching(true)
+
     const { data, total } = await findRoles({ page: page + 1, pageSize })
     setRoles(data)
     setTotalRoles(total)
+
     setIsLoading(false)
+    setIsFetching(false)
   }, [])
 
   useEffect(() => {
@@ -60,7 +66,7 @@ export default function RoleTable() {
       pageIndex={pageIndex}
       onPageChange={onPageChange}
       onPageSizeChange={onPageSizeChange}
-      isLoading={isLoading}
+      isLoading={isFetching}
     />
   )
 }

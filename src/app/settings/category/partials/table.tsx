@@ -10,6 +10,8 @@ import { columns } from './columns'
 
 export default function CategoryTable() {
   const [isLoading, setIsLoading] = useState(true)
+  const [isFetching, setIsFetching] = useState(true)
+
   const [categories, setCategories] = useState<CategoryEntity[]>([])
   const [totalCategories, setTotalCategories] = useState(0)
 
@@ -17,10 +19,14 @@ export default function CategoryTable() {
   const [pageSize, setPageSize] = useState(10)
 
   const getCategories = useCallback(async (page: number, pageSize: number) => {
+    setIsFetching(true)
+
     const { data, total } = await findCategories({ page: page + 1, pageSize })
     setCategories(data)
     setTotalCategories(total)
+
     setIsLoading(false)
+    setIsFetching(false)
   }, [])
 
   useEffect(() => {
@@ -60,7 +66,7 @@ export default function CategoryTable() {
       pageIndex={pageIndex}
       onPageChange={onPageChange}
       onPageSizeChange={onPageSizeChange}
-      isLoading={isLoading}
+      isLoading={isFetching}
     />
   )
 }
