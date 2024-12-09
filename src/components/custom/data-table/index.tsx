@@ -196,16 +196,6 @@ export function DataTable<TData, TValue>({
   }
 
   function renderTableBody() {
-    if (isLoading) {
-      return (
-        <TableRow>
-          <TableCell colSpan={columns.length + 2} className="h-24 text-center">
-            <Loader label="Fetching data..." />
-          </TableCell>
-        </TableRow>
-      )
-    }
-
     if (table.getRowModel().rows?.length > 0) {
       return table.getRowModel().rows.map((row) => (
         <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
@@ -224,10 +214,20 @@ export function DataTable<TData, TValue>({
       ))
     }
 
+    if (table.getRowModel().rows?.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length + 2} className="h-24 text-center">
+            No results.
+          </TableCell>
+        </TableRow>
+      )
+    }
+
     return (
       <TableRow>
         <TableCell colSpan={columns.length + 2} className="h-24 text-center">
-          No results.
+          <Loader label="Fetching data..." />
         </TableCell>
       </TableRow>
     )
