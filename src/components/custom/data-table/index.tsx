@@ -37,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table'
+import { cn } from '~/lib/utils'
 import Loader from '../loader'
 import DataTablePagination from './data-table-pagination'
 import DataTableViewOptions from './data-table-view-options'
@@ -56,6 +57,10 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean
   pageSizeOptions?: number[]
 }
+
+const EXCLUDED_COLUMNS = ['select', 'actions'] as const
+
+type ExcludedColumnType = (typeof EXCLUDED_COLUMNS)[number]
 
 export function DataTable<TData, TValue>({
   columns,
@@ -206,31 +211,29 @@ export function DataTable<TData, TValue>({
       )
     }
 
-    if (table.getRowModel().rows?.length > 0) {
-      return table.getRowModel().rows.map((row) => (
-        <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-          {row.getVisibleCells().map((cell: Cell<TData, TValue>) => (
-            <TableCell key={cell.id}>
-              {['select', 'actions', 'is_active', 'is_blocked'].includes(cell.column.id) ? (
-                flexRender(cell.column.columnDef.cell, cell.getContext())
-              ) : (
-                <span className="ml-4">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </span>
-              )}
-            </TableCell>
-          ))}
+    if (!table.getRowModel().rows?.length) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length + 2} className="h-24 text-center">
+            No results.
+          </TableCell>
         </TableRow>
-      ))
+      )
     }
 
-    return (
-      <TableRow>
-        <TableCell colSpan={columns.length + 2} className="h-24 text-center">
-          No results.
-        </TableCell>
+    return table.getRowModel().rows.map((row) => (
+      <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+        {row.getVisibleCells().map((cell: Cell<TData, TValue>) => {
+          const isExcludedColumn = EXCLUDED_COLUMNS.includes(cell.column.id as ExcludedColumnType)
+
+          return (
+            <TableCell key={cell.id} className={cn('py-3', !isExcludedColumn && 'px-4')}>
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </TableCell>
+          )
+        })}
       </TableRow>
-    )
+    ))
   }
 
   return (
@@ -253,7 +256,7 @@ export function DataTable<TData, TValue>({
         </Link>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border w-full">
         <Table>
           <TableHeader>{renderTableHeader()}</TableHeader>
           <TableBody>{renderTableBody()}</TableBody>
