@@ -30,100 +30,126 @@ import { createWebinarBatch, findWebinarBatchById, updateWebinarBatch } from '..
 type FormProps = {
   initialValues: z.infer<typeof webinarBatchSchema.create>
   mutation: ReturnType<typeof useMutation<any, any, any, any>>
+  isEdit?: boolean
 }
 
-function AbstractForm({ initialValues, mutation }: FormProps) {
+function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
   const router = useRouter()
-
-  const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof webinarBatchSchema.create>>({
     resolver: zodResolver(webinarBatchSchema.create),
     defaultValues: initialValues,
   })
+  const {
+    formState: { isSubmitting },
+  } = form
 
   async function onSubmit(data: z.infer<typeof webinarBatchSchema.create>) {
-    setIsLoading(true)
     await mutation.mutateAsync(data)
-    setIsLoading(false)
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
-          <div className="lg:col-span-3">
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Input your webinar batch name" {...field} />
-                    </FormControl>
+    <>
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold">{`${isEdit ? 'Edit' : 'Add'} - Webinar Batch`}</h1>
+        <h4 className="text-muted-foreground">You can manage webinar batch here</h4>
+      </div>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="instructor"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Instructor</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Input your webinar batch instructor" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
+            <div className="lg:col-span-3">
+              <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="start_date"
+                  name="name"
                   render={({ field }) => (
-                    <FormItem className="flex flex-col space-y-3">
-                      <FormLabel>Start Date</FormLabel>
-                      <CalendarInput value={field.value} onChange={field.onChange} />
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="end_date"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col space-y-3">
-                      <FormLabel>End Date</FormLabel>
-                      <CalendarInput value={field.value} onChange={field.onChange} />
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="batch"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col space-y-3">
-                      <FormLabel>Batch</FormLabel>
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <NumberInput
-                          id="batch"
+                        <Input placeholder="Input your webinar batch name" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="instructor"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Instructor</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Input your webinar batch instructor" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="start_date"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormLabel>Start Date</FormLabel>
+                        <CalendarInput value={field.value} onChange={field.onChange} />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="end_date"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormLabel>End Date</FormLabel>
+                        <CalendarInput value={field.value} onChange={field.onChange} />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="batch"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormLabel>Batch</FormLabel>
+                        <FormControl>
+                          <NumberInput
+                            id="batch"
+                            value={field.value}
+                            onValueChange={(e) => field.onChange(e.value)}
+                            thousandSeparator=","
+                            placeholder="Enter batch"
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-3">
+                      <FormLabel>Status</FormLabel>
+                      <FormControl>
+                        <CheckboxInput
+                          label="Set active this webinar batch"
                           value={field.value}
-                          onValueChange={(e) => field.onChange(e.value)}
-                          thousandSeparator=","
-                          placeholder="Enter batch"
+                          onChange={field.onChange}
                         />
                       </FormControl>
 
@@ -132,57 +158,38 @@ function AbstractForm({ initialValues, mutation }: FormProps) {
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="is_active"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-3">
-                    <FormLabel>Status</FormLabel>
-                    <FormControl>
-                      <CheckboxInput
-                        label="Set active this webinar batch"
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
-          </div>
 
-          <div className="lg:col-span-1">
-            <div className="flex flex-col">
-              <h3 className="text-lg font-semibold">Actions</h3>
-              <Separator className="my-4" />
+            <div className="lg:col-span-1">
+              <div className="flex flex-col">
+                <h3 className="text-lg font-semibold">Actions</h3>
+                <Separator className="my-4" />
 
-              <div className="flex flex-row justify-center gap-4">
-                <Button
-                  className="w-full rounded-lg"
-                  variant={'outline'}
-                  type="button"
-                  onClick={() => router.back()}
-                >
-                  <IconArrowLeft className="h-4 w-4" />
-                  <span>Back</span>
-                </Button>
-                <Button
-                  className="w-full rounded-lg bg-blue-500 hover:bg-blue-500/80"
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {isLoading && <IconLoader className="mr-1 h-4 w-4 animate-spin" />}
-                  {isLoading ? 'Submitting...' : 'Submit'}
-                </Button>
+                <div className="flex flex-row justify-center gap-4">
+                  <Button
+                    className="w-full rounded-lg"
+                    variant={'outline'}
+                    type="button"
+                    onClick={() => router.back()}
+                  >
+                    <IconArrowLeft className="h-4 w-4" />
+                    <span>Back</span>
+                  </Button>
+                  <Button
+                    className="w-full rounded-lg bg-blue-500 hover:bg-blue-500/80"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting && <IconLoader className="mr-1 h-4 w-4 animate-spin" />}
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </>
   )
 }
 
@@ -226,7 +233,7 @@ type FormEditProps = {
 export function FormEdit({ id }: FormEditProps) {
   const router = useRouter()
 
-  const [isLoading, setIsLoading] = useState(true)
+  const [isFetching, setIsFetching] = useState(true)
   const [webinarBatch, setWebinarBatch] = useState<WebinarBatchEntity>({
     id: '',
     created_at: '',
@@ -244,7 +251,7 @@ export function FormEdit({ id }: FormEditProps) {
   const getWebinarBatch = useCallback(async () => {
     const { data } = await findWebinarBatchById(id)
     setWebinarBatch(data)
-    setIsLoading(false)
+    setIsFetching(false)
   }, [id])
 
   useEffect(() => {
@@ -266,7 +273,7 @@ export function FormEdit({ id }: FormEditProps) {
     },
   })
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loader />
@@ -283,6 +290,7 @@ export function FormEdit({ id }: FormEditProps) {
         batch: String(webinarBatch.batch),
       }}
       mutation={mutation}
+      isEdit={!!id}
     />
   )
 }

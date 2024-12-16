@@ -42,9 +42,10 @@ import SelectInput from '~/components/ui/select-input'
 type FormProps = {
   initialValues: z.infer<typeof webinarSchema.create>
   mutation: ReturnType<typeof useMutation<any, any, any, any>>
+  isEdit?: boolean
 }
 
-function AbstractForm({ initialValues, mutation }: FormProps) {
+function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
   const router = useRouter()
 
   const page = 1
@@ -107,49 +108,24 @@ function AbstractForm({ initialValues, mutation }: FormProps) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
-          <div className="lg:col-span-3 space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Input your title" {...field} />
-                  </FormControl>
+    <>
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold">{`${isEdit ? 'Edit' : 'Add'} - Mini Courses`}</h1>
+        <h4 className="text-muted-foreground">You can manage mini courses here</h4>
+      </div>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea rows={4} placeholder="Input your description" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
+            <div className="lg:col-span-3 space-y-4">
               <FormField
                 control={form.control}
-                name="speakers"
+                name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Speakers</FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Input your speakers" {...field} />
+                      <Input placeholder="Input your title" {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -159,47 +135,12 @@ function AbstractForm({ initialValues, mutation }: FormProps) {
 
               <FormField
                 control={form.control}
-                name="category_id"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <SelectInput
-                      options={selectCategory}
-                      onSelect={field.onChange}
-                      defaultValue={field.value}
-                      placeholder="Select a category"
-                    />
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="ipfs_cid"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>IPFS CID</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="Input your ipfs cid" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="start_date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Start Date</FormLabel>
-                    <FormControl>
-                      <DateTimePicker date={field.value} setDate={field.onChange} />
+                      <Textarea rows={4} placeholder="Input your description" {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -207,109 +148,114 @@ function AbstractForm({ initialValues, mutation }: FormProps) {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="end_date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>End Date</FormLabel>
-                    <FormControl>
-                      <DateTimePicker date={field.value} setDate={field.onChange} />
-                    </FormControl>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="speakers"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Speakers</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Input your speakers" {...field} />
+                      </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="chain_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Chain ID</FormLabel>
-                    <SelectInput
-                      options={selectChain}
-                      onSelect={field.onChange}
-                      defaultValue={field.value}
-                      placeholder="Select a chain id"
-                    />
+                <FormField
+                  control={form.control}
+                  name="category_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <SelectInput
+                        options={selectCategory}
+                        onSelect={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select a category"
+                      />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="webinar_url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Webinar URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Input your webinar url" {...field} />
-                  </FormControl>
+                <FormField
+                  control={form.control}
+                  name="ipfs_cid"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>IPFS CID</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Input your ipfs cid" {...field} />
+                      </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="recording_url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Recording URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Input your recording url" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="lg:col-span-1">
-            <div className="flex flex-col gap-4">
-              <h3 className="text-lg font-semibold">Actions</h3>
-              <Separator />
-
-              <div className="flex flex-row justify-center gap-4">
-                <Button
-                  className="w-full rounded-lg"
-                  variant={'outline'}
-                  type="button"
-                  onClick={() => router.back()}
-                >
-                  <IconArrowLeft className="h-4 w-4" />
-                  <span>Back</span>
-                </Button>
-                <Button
-                  className="w-full rounded-lg bg-blue-500 hover:bg-blue-500/80"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting && <IconLoader className="mr-1 h-4 w-4 animate-spin" />}
-                  {isSubmitting ? 'Submitting...' : 'Submit'}
-                </Button>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
-              <Separator />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="start_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Start Date</FormLabel>
+                      <FormControl>
+                        <DateTimePicker date={field.value} setDate={field.onChange} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="end_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Date</FormLabel>
+                      <FormControl>
+                        <DateTimePicker date={field.value} setDate={field.onChange} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="chain_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Chain ID</FormLabel>
+                      <SelectInput
+                        options={selectChain}
+                        onSelect={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select a chain id"
+                      />
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
-                name="is_active"
+                name="webinar_url"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-3">
+                  <FormItem>
+                    <FormLabel>Webinar URL</FormLabel>
                     <FormControl>
-                      <CheckboxInput
-                        label="Set active this webinar mini course"
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
+                      <Input placeholder="Input your webinar url" {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -319,15 +265,12 @@ function AbstractForm({ initialValues, mutation }: FormProps) {
 
               <FormField
                 control={form.control}
-                name="is_premium"
+                name="recording_url"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-3">
+                  <FormItem>
+                    <FormLabel>Recording URL</FormLabel>
                     <FormControl>
-                      <CheckboxInput
-                        label="Set premium recording this mini course"
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
+                      <Input placeholder="Input your recording url" {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -335,10 +278,75 @@ function AbstractForm({ initialValues, mutation }: FormProps) {
                 )}
               />
             </div>
+
+            <div className="lg:col-span-1">
+              <div className="flex flex-col gap-4">
+                <h3 className="text-lg font-semibold">Actions</h3>
+                <Separator />
+
+                <div className="flex flex-row justify-center gap-4">
+                  <Button
+                    className="w-full rounded-lg"
+                    variant={'outline'}
+                    type="button"
+                    onClick={() => router.back()}
+                  >
+                    <IconArrowLeft className="h-4 w-4" />
+                    <span>Back</span>
+                  </Button>
+                  <Button
+                    className="w-full rounded-lg bg-blue-500 hover:bg-blue-500/80"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting && <IconLoader className="mr-1 h-4 w-4 animate-spin" />}
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                  </Button>
+                </div>
+
+                <Separator />
+
+                <FormField
+                  control={form.control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-3">
+                      <FormControl>
+                        <CheckboxInput
+                          label="Set active this webinar mini course"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="is_premium"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-3">
+                      <FormControl>
+                        <CheckboxInput
+                          label="Set premium recording this mini course"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </>
   )
 }
 
@@ -452,6 +460,7 @@ export function FormEdit({ id }: FormEditProps) {
         is_premium: validate.boolean(webinar.is_premium),
       }}
       mutation={mutation}
+      isEdit={!!id}
     />
   )
 }
