@@ -40,7 +40,7 @@ export const columns: ColumnDef<WebinarBatchEntity>[] = [
     cell: ({ row }) => {
       const isActive = validate.boolean(row.original.is_active)
       return (
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-2">
           <Checkbox checked={isActive} />
           <span>{isActive ? 'Active' : 'Inactive'}</span>
         </div>

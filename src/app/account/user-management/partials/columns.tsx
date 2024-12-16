@@ -28,7 +28,7 @@ export const columns: ColumnDef<UserEntity>[] = [
     cell: ({ row }) => {
       const isActive = validate.boolean(row.original.is_active)
       return (
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-2">
           <Checkbox checked={isActive} />
           <span>{isActive ? 'Yes' : 'No'}</span>
         </div>
@@ -41,7 +41,7 @@ export const columns: ColumnDef<UserEntity>[] = [
     cell: ({ row }) => {
       const isBlocked = validate.boolean(row.original.is_blocked)
       return (
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-2">
           <Checkbox checked={isBlocked} />
           <span>{isBlocked ? 'Yes' : 'No'}</span>
         </div>
