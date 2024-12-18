@@ -60,7 +60,7 @@ export default function WebinarTable() {
       columns={columns}
       data={webinars}
       total={totalWebinars}
-      baseUrl="/webinar/mini-courses"
+      baseUrl="/mini-courses"
       onDelete={(id) => onDelete(id)}
       pageSize={pageSize}
       pageIndex={pageIndex}

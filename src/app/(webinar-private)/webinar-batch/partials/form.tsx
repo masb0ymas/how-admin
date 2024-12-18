@@ -207,7 +207,7 @@ export function FormAdd() {
         toast.success(data.message)
       }
 
-      router.push('/settings/webinar-batch')
+      router.push('/webinar-batch')
     },
   })
 
@@ -269,7 +269,7 @@ export function FormEdit({ id }: FormEditProps) {
         toast.success(data.message)
       }
 
-      router.push('/settings/webinar-batch')
+      router.push('/webinar-batch')
     },
   })
 

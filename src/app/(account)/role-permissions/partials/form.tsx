@@ -118,7 +118,7 @@ export function FormAdd() {
         toast.success(data.message)
       }
 
-      router.push('/account/role-permissions')
+      router.push('/role-permissions')
     },
   })
 
@@ -161,7 +161,7 @@ export function FormEdit({ id }: FormEditProps) {
         toast.success(data.message)
       }
 
-      router.push('/account/role-permissions')
+      router.push('/role-permissions')
     },
   })
 

@@ -60,7 +60,7 @@ export default function WebinarBatchTable() {
       columns={columns}
       data={webinarBatches}
       total={totalWebinarBatches}
-      baseUrl="/settings/webinar-batch"
+      baseUrl="/webinar-batch"
       onDelete={(id) => onDelete(id)}
       pageSize={pageSize}
       pageIndex={pageIndex}

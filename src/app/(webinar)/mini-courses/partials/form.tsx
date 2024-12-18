@@ -363,7 +363,7 @@ export function FormAdd() {
         toast.success(data.message)
       }
 
-      router.push('/webinar/mini-courses')
+      router.push('/mini-courses')
     },
   })
 
@@ -437,7 +437,7 @@ export function FormEdit({ id }: FormEditProps) {
         toast.success(data.message)
       }
 
-      router.push('/webinar/mini-courses')
+      router.push('/mini-courses')
     },
   })
 
