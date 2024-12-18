@@ -312,7 +312,7 @@ const SidebarInset = React.forwardRef<HTMLDivElement, React.ComponentProps<'main
         ref={ref}
         data-state={state}
         className={cn(
-          'relative flex min-h-svh flex-1 flex-col bg-background transition-all ease-in-out duration-300 delay-300',
+          'relative flex min-h-svh flex-1 flex-col bg-background transition-all ease-in-out duration-500 delay-500',
           'peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow',
           state === 'expanded' ? 'max-w-[calc(100%-16rem)]' : 'max-w-[calc(100%-3rem)]',
           className
