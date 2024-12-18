@@ -33,10 +33,28 @@ const navWebinar = [
     url: '/webinar/mini-courses',
     icon: IconPictureInPictureTop,
   },
+]
+
+const navWebinarPrivate = [
   {
-    title: 'Private - Courses',
+    title: 'Webinar Batch',
+    url: '/settings/webinar-batch',
+    icon: IconTableShare,
+  },
+  {
+    title: 'Private Plan',
+    url: '/webinar/private-plan',
+    icon: IconPictureInPictureTop,
+  },
+  {
+    title: 'Private Courses',
     url: '/webinar/private-courses',
     icon: IconDeviceAnalytics,
+  },
+  {
+    title: 'Membership',
+    url: '/webinar/private-membership',
+    icon: IconUsers,
   },
 ]
 
@@ -98,11 +116,6 @@ const navSettings = [
     url: '/settings/category',
     icon: IconCategory,
   },
-  {
-    title: 'Webinar Batch',
-    url: '/settings/webinar-batch',
-    icon: IconTableShare,
-  },
 ]
 
 // This is sample data.
@@ -114,6 +127,10 @@ export const sidebarMenu = [
   {
     title: 'Webinar',
     items: navWebinar,
+  },
+  {
+    title: 'Webinar Private',
+    items: navWebinarPrivate,
   },
   {
     title: 'Courses',
