@@ -3,34 +3,34 @@
 import { useCallback, useEffect, useState } from 'react'
 import { DataTable } from '~/components/custom/data-table'
 import Loader from '~/components/custom/loader'
-import { UserEntity } from '~/data/entity/user'
-import { findUsers } from '../action'
+import { SessionEntity } from '~/data/entity/session'
+import { findSessions } from '../action'
 import { columns } from './columns'
 
-export default function UsersTable() {
+export default function SessionsTable() {
   const [isLoading, setIsLoading] = useState(true)
   const [isFetching, setIsFetching] = useState(true)
 
-  const [users, setUsers] = useState<UserEntity[]>([])
-  const [totalUsers, setTotalUsers] = useState(0)
+  const [sessions, setSessions] = useState<SessionEntity[]>([])
+  const [totalSessions, setTotalSessions] = useState(0)
 
   const [pageIndex, setPageIndex] = useState(0)
   const [pageSize, setPageSize] = useState(10)
 
-  const getUsers = useCallback(async (page: number, pageSize: number) => {
+  const getSessions = useCallback(async (page: number, pageSize: number) => {
     setIsFetching(true)
 
-    const { data, total } = await findUsers({ page: page + 1, pageSize })
-    setUsers(data)
-    setTotalUsers(total)
+    const { data, total } = await findSessions({ page: page + 1, pageSize })
+    setSessions(data)
+    setTotalSessions(total)
 
     setIsLoading(false)
     setIsFetching(false)
   }, [])
 
   useEffect(() => {
-    getUsers(pageIndex, pageSize)
-  }, [getUsers, pageIndex, pageSize])
+    getSessions(pageIndex, pageSize)
+  }, [getSessions, pageIndex, pageSize])
 
   const onPageChange = useCallback((page: number) => setPageIndex(page), [])
   const onPageSizeChange = useCallback((pageSize: number) => setPageSize(pageSize), [])
@@ -42,9 +42,10 @@ export default function UsersTable() {
   return (
     <DataTable
       columns={columns}
-      data={users}
-      total={totalUsers}
-      baseUrl="/account/user-management"
+      data={sessions}
+      total={totalSessions}
+      baseUrl="/sessions"
+      isAdd={false}
       isEdit={false}
       isDelete={false}
       pageSize={pageSize}

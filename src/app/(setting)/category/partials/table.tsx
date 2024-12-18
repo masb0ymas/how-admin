@@ -60,7 +60,7 @@ export default function CategoryTable() {
       columns={columns}
       data={categories}
       total={totalCategories}
-      baseUrl="/settings/category"
+      baseUrl="/category"
       onDelete={(id) => onDelete(id)}
       pageSize={pageSize}
       pageIndex={pageIndex}

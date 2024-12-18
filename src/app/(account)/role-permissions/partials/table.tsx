@@ -60,7 +60,7 @@ export default function RoleTable() {
       columns={columns}
       data={roles}
       total={totalRoles}
-      baseUrl="/account/role-permissions"
+      baseUrl="/role-permissions"
       onDelete={(id) => onDelete(id)}
       pageSize={pageSize}
       pageIndex={pageIndex}

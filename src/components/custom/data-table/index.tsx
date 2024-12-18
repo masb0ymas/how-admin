@@ -46,6 +46,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   baseUrl: string
+  isAdd?: boolean
   isEdit?: boolean
   isDelete?: boolean
   onDelete?: (id: string) => void
@@ -66,6 +67,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   baseUrl,
+  isAdd = true,
   isEdit = true,
   isDelete = true,
   onDelete,
@@ -248,12 +250,14 @@ export function DataTable<TData, TValue>({
 
         <DataTableViewOptions table={table} />
 
-        <Link href={`${baseUrl}/add`}>
-          <Button className="bg-blue-500 font-semibold hover:bg-blue-500/90">
-            <IconPlus className="h-4 w-4" />
-            <span>Add</span>
-          </Button>
-        </Link>
+        {isAdd && (
+          <Link href={`${baseUrl}/add`}>
+            <Button className="bg-blue-500 font-semibold hover:bg-blue-500/90">
+              <IconPlus className="h-4 w-4" />
+              <span>Add</span>
+            </Button>
+          </Link>
+        )}
       </div>
 
       <div className="rounded-md border w-full">

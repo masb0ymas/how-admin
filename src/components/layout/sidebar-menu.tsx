@@ -2,21 +2,16 @@
 
 import {
   IconBinaryTree,
-  IconCards,
   IconCategory,
   IconChartAreaLine,
-  IconContract,
   IconDeviceAnalytics,
   IconHistory,
   IconHome2,
-  IconNotebook,
   IconPictureInPictureTop,
   IconReceipt,
-  IconSettings,
   IconTableShare,
   IconUser,
   IconUsers,
-  IconVideo,
 } from '@tabler/icons-react'
 
 const navMain = [
@@ -30,7 +25,7 @@ const navMain = [
 const navWebinar = [
   {
     title: 'Mini - Courses',
-    url: '/webinar/mini-courses',
+    url: '/mini-courses',
     icon: IconPictureInPictureTop,
   },
 ]
@@ -38,36 +33,23 @@ const navWebinar = [
 const navWebinarPrivate = [
   {
     title: 'Webinar Batch',
-    url: '/settings/webinar-batch',
+    url: '/webinar-batch',
     icon: IconTableShare,
   },
   {
     title: 'Private Plan',
-    url: '/webinar/private-plan',
+    url: '/private-plan',
     icon: IconPictureInPictureTop,
   },
   {
     title: 'Private Courses',
-    url: '/webinar/private-courses',
+    url: '/private-courses',
     icon: IconDeviceAnalytics,
   },
   {
     title: 'Membership',
-    url: '/webinar/private-membership',
+    url: '/private-membership',
     icon: IconUsers,
-  },
-]
-
-const navCourses = [
-  {
-    title: 'Data Analyst',
-    url: '/courses/data-analyst',
-    icon: IconDeviceAnalytics,
-  },
-  {
-    title: 'Smart Contracts',
-    url: '/courses/smart-contracts',
-    icon: IconContract,
   },
 ]
 
@@ -79,7 +61,7 @@ const navTransaction = [
   },
   {
     title: 'Payout',
-    url: '/transaction/payout',
+    url: '/payout',
     icon: IconReceipt,
   },
 ]
@@ -95,17 +77,17 @@ const navAnalytics = [
 const navAccount = [
   {
     title: 'User Management',
-    url: '/account/user-management',
+    url: '/user-management',
     icon: IconUser,
   },
   {
     title: 'Role Permissions',
-    url: '/account/role-permissions',
+    url: '/role-permissions',
     icon: IconBinaryTree,
   },
   {
     title: 'Sessions',
-    url: '/account/sessions',
+    url: '/sessions',
     icon: IconHistory,
   },
 ]
@@ -113,7 +95,7 @@ const navAccount = [
 const navSettings = [
   {
     title: 'Category',
-    url: '/settings/category',
+    url: '/category',
     icon: IconCategory,
   },
 ]
@@ -131,10 +113,6 @@ export const sidebarMenu = [
   {
     title: 'Webinar Private',
     items: navWebinarPrivate,
-  },
-  {
-    title: 'Courses',
-    items: navCourses,
   },
   {
     title: 'Transaction',
