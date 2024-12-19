@@ -25,13 +25,13 @@ export default async function SignInPage() {
       <div className="relative rounded-xl">
         <BorderBeam borderWidth={2} />
 
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-8">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 space-y-8">
           {/* Header */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold font-serif tracking-wide text-gray-900">
+            <h1 className="text-3xl font-bold font-serif tracking-wide text-gray-900 dark:text-white">
               House of Wizard
             </h1>
-            <h3 className="mt-2 text-gray-500">
+            <h3 className="mt-2 text-gray-500 dark:text-gray-400">
               To become a great wizard, you need to login with your account first.
             </h3>
           </div>
