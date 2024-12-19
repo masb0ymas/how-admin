@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function PrivatePlanPage() {
   return (
-    <section className="container mx-auto pb-10">
+    <section className="container mx-auto">
       <div className="mb-4">
         <h1 className="text-2xl font-bold">Private Plan</h1>
         <h4 className="text-muted-foreground">You can manage private plan settings here</h4>

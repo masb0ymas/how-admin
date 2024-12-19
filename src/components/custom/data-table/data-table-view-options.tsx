@@ -19,7 +19,7 @@ export default function DataTableViewOptions<TData>({ table }: IProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="ml-auto">
+        <Button variant="outline" className="ml-auto font-semibold">
           <IconAdjustmentsHorizontal className="h-4 w-4" />
           <span>View</span>
         </Button>

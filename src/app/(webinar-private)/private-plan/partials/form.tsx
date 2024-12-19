@@ -241,7 +241,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
 
                 <div className="flex flex-row justify-center gap-4">
                   <Button
-                    className="w-full rounded-lg"
+                    className="w-full rounded-lg font-semibold"
                     variant={'outline'}
                     type="button"
                     onClick={() => router.back()}
@@ -250,7 +250,8 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     <span>Back</span>
                   </Button>
                   <Button
-                    className="w-full rounded-lg bg-blue-500 hover:bg-blue-500/80"
+                    variant={'default'}
+                    className='w-full rounded-lg font-semibold'
                     type="submit"
                     disabled={isSubmitting}
                   >
