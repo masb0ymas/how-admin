@@ -26,7 +26,7 @@ export default function AppLayout({ children }: IProps) {
           </div>
         </header>
 
-        <div className="flex flex-col p-4 sm:p-6 lg:p-8 pt-0 lg:pt-6">{children}</div>
+        <div className="flex flex-col p-4 sm:p-6 pt-0 lg:pt-6">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   )

@@ -252,7 +252,7 @@ export function DataTable<TData, TValue>({
 
         {isAdd && (
           <Link href={`${baseUrl}/add`}>
-            <Button className="bg-blue-500 font-semibold hover:bg-blue-500/90">
+            <Button variant={"default"} className='ml-auto font-semibold'>
               <IconPlus className="h-4 w-4" />
               <span>Add</span>
             </Button>

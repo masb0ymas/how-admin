@@ -12,5 +12,9 @@ export default async function SettingsLayout({ children }: IProps) {
     redirect('/sign-in')
   }
 
-  return <AppLayout>{children}</AppLayout>
+  return (
+    <AppLayout>
+      <div className="bg-gradient-to-br from-sidebar to-sidebar/70 p-4 sm:p-6 rounded-xl border-[1px] shadow-lg">{children}</div>
+    </AppLayout>
+  )
 }
