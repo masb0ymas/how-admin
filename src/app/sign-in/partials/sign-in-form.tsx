@@ -110,13 +110,13 @@ export default function SignInForm() {
       </form>
 
       {/* Terms */}
-      <p className="text-center text-sm text-gray-500">
+      <p className="text-center text-sm text-gray-500 dark:text-gray-400">
         By continuing, you agree to our{' '}
-        <Link href="/term-of-service" className="font-medium text-indigo-600 hover:text-indigo-500">
+        <Link href="/term-of-service" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
           Terms of Service
         </Link>{' '}
         and{' '}
-        <Link href="/privacy-policy" className="font-medium text-indigo-600 hover:text-indigo-500">
+        <Link href="/privacy-policy" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
           Privacy Policy
         </Link>
       </p>
