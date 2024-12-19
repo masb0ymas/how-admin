@@ -7,3 +7,14 @@ export const getChain = (chain_id: string) => {
 
   return chain
 }
+
+export const selectChain = [
+  {
+    value: '8453',
+    label: 'Base',
+  },
+  {
+    value: '11155111',
+    label: 'Sepolia',
+  },
+]
