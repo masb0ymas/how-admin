@@ -8,9 +8,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { z } from 'zod'
+import { findUsers } from '~/app/(account)/user-management/action'
 import Loader from '~/components/custom/loader'
 import { Button } from '~/components/ui/button'
-import { CalendarInput } from '~/components/ui/calendar-input'
 import CheckboxInput from '~/components/ui/checkbox-input'
 import {
   Form,
@@ -20,15 +20,18 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
-import { NumberInput } from '~/components/ui/number-input'
+import SelectInput from '~/components/ui/select-input'
 import { Separator } from '~/components/ui/separator'
-import { WebinarBatchEntity } from '~/data/entity/webinar-batch'
-import webinarBatchSchema from '~/data/schema/webinar-batch'
-import { createWebinarBatch, findWebinarBatchById, updateWebinarBatch } from '../action'
+import { Textarea } from '~/components/ui/textarea'
+import { InstructorEntity } from '~/data/entity/instructor'
+import { UserEntity } from '~/data/entity/user'
+import instructorSchema from '~/data/schema/instructor'
+import { validate } from '~/lib/validate'
+import { createInstructor, findInstructorById, updateInstructor } from '../action'
+import ConstRole from '~/lib/constant/role'
 
 type FormProps = {
-  initialValues: z.infer<typeof webinarBatchSchema.create>
+  initialValues: z.infer<typeof instructorSchema.create>
   mutation: ReturnType<typeof useMutation<any, any, any, any>>
   isEdit?: boolean
 }
@@ -36,23 +39,56 @@ type FormProps = {
 function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
   const router = useRouter()
 
-  const form = useForm<z.infer<typeof webinarBatchSchema.create>>({
-    resolver: zodResolver(webinarBatchSchema.create),
+  const page = 1
+  const pageSize = 100
+
+  const [isFetching, setIsFetching] = useState(true)
+  const [users, setUsers] = useState<UserEntity[]>([])
+
+  const getUsers = useCallback(async (page: number, pageSize: number) => {
+    const { data } = await findUsers({
+      page,
+      pageSize,
+      roleAs: ConstRole.INSTRUCTOR,
+    })
+    setUsers(data)
+
+    setIsFetching(false)
+  }, [])
+
+  useEffect(() => {
+    getUsers(page, pageSize)
+  }, [getUsers, page, pageSize])
+
+  const selectUsers =
+    users.length > 0
+      ? users
+          .filter((item) => item.fullname !== '-')
+          .map((item) => {
+            return {
+              value: item.id,
+              label: `${item.fullname} (${item.email}) - ${item?.role?.name}`,
+            }
+          })
+      : []
+
+  const form = useForm<z.infer<typeof instructorSchema.create>>({
+    resolver: zodResolver(instructorSchema.create),
     defaultValues: initialValues,
   })
   const {
     formState: { isSubmitting },
   } = form
 
-  async function onSubmit(data: z.infer<typeof webinarBatchSchema.create>) {
+  async function onSubmit(data: z.infer<typeof instructorSchema.create>) {
     await mutation.mutateAsync(data)
   }
 
   return (
     <>
       <div className="mb-4">
-        <h1 className="text-2xl font-bold">{`${isEdit ? 'Edit' : 'Add'} - Webinar Batch`}</h1>
-        <h4 className="text-muted-foreground">You can manage webinar batch here</h4>
+        <h1 className="text-2xl font-bold">{`${isEdit ? 'Edit' : 'Add'} - Instructor`}</h1>
+        <h4 className="text-muted-foreground">You can manage instructor here</h4>
       </div>
 
       <Form {...form}>
@@ -62,13 +98,16 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="user_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Input your webinar batch name" {...field} />
-                      </FormControl>
+                      <FormLabel>User</FormLabel>
+                      <SelectInput
+                        options={selectUsers}
+                        onSelect={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select a user"
+                      />
 
                       <FormMessage />
                     </FormItem>
@@ -77,67 +116,18 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
 
                 <FormField
                   control={form.control}
-                  name="instructor"
+                  name="bio"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Instructor</FormLabel>
+                      <FormLabel>Bio</FormLabel>
                       <FormControl>
-                        <Input placeholder="Input your webinar batch instructor" {...field} />
+                        <Textarea rows={4} placeholder="Input your bio" {...field} />
                       </FormControl>
 
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="start_date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>Start Date</FormLabel>
-                        <CalendarInput value={field.value} onChange={field.onChange} />
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="end_date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>End Date</FormLabel>
-                        <CalendarInput value={field.value} onChange={field.onChange} />
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="batch"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>Batch</FormLabel>
-                        <FormControl>
-                          <NumberInput
-                            id="batch"
-                            value={field.value}
-                            onValueChange={(e) => field.onChange(e.value)}
-                            thousandSeparator=","
-                            placeholder="Enter batch"
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
               </div>
             </div>
 
@@ -179,7 +169,26 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                         <FormControl>
                           <CheckboxInput
                             htmlFor="is_active"
-                            label={`Set Webinar batch is ${field.value ? 'ACTIVE' : 'INACTIVE'}`}
+                            label={`Set Instructor is ${field.value ? 'ACTIVE' : 'INACTIVE'}`}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="is_verified"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormControl>
+                          <CheckboxInput
+                            htmlFor="is_verified"
+                            label={`Set Instructor is ${field.value ? 'VERIFIED' : 'UNVERIFIED'}`}
                             value={field.value}
                             onChange={field.onChange}
                           />
@@ -203,8 +212,8 @@ export function FormAdd() {
   const router = useRouter()
 
   const mutation = useMutation({
-    mutationFn: async (data: z.infer<typeof webinarBatchSchema.create>) =>
-      await createWebinarBatch(data),
+    mutationFn: async (data: z.infer<typeof instructorSchema.create>) =>
+      await createInstructor(data),
     onSuccess: (data) => {
       if (data.isError) {
         toast.error(data.message)
@@ -213,19 +222,21 @@ export function FormAdd() {
         toast.success(data.message)
       }
 
-      router.push('/webinar-batch')
+      router.push('/instructor')
     },
   })
 
   return (
     <AbstractForm
       initialValues={{
-        name: '',
-        instructor: '',
-        batch: '',
-        start_date: new Date(),
-        end_date: new Date(),
+        user_id: '',
+        bio: '',
+        image: '',
         is_active: true,
+        is_verified: false,
+        balance: 0,
+        total_withdraw: 0,
+        total_withdraw_fee: 0,
       }}
       mutation={mutation}
     />
@@ -240,33 +251,34 @@ export function FormEdit({ id }: FormEditProps) {
   const router = useRouter()
 
   const [isFetching, setIsFetching] = useState(true)
-  const [webinarBatch, setWebinarBatch] = useState<WebinarBatchEntity>({
+  const [instructor, setInstructor] = useState<InstructorEntity>({
     id: '',
     created_at: '',
     updated_at: '',
     deleted_at: null,
-    name: '',
-    instructor: '',
-    batch: '',
-    start_date: new Date(),
-    end_date: new Date(),
-    duration: '',
-    is_active: true,
+    user_id: '',
+    bio: '',
+    image: '',
+    is_active: false,
+    is_verified: false,
+    balance: 0,
+    total_withdraw: 0,
+    total_withdraw_fee: 0,
   })
 
-  const getWebinarBatch = useCallback(async () => {
-    const { data } = await findWebinarBatchById(id)
-    setWebinarBatch(data)
+  const getInstructor = useCallback(async () => {
+    const { data } = await findInstructorById(id)
+    setInstructor(data)
     setIsFetching(false)
   }, [id])
 
   useEffect(() => {
-    getWebinarBatch()
-  }, [id, getWebinarBatch])
+    getInstructor()
+  }, [id, getInstructor])
 
   const mutation = useMutation({
-    mutationFn: async (data: z.infer<typeof webinarBatchSchema.create>) =>
-      await updateWebinarBatch(id, data),
+    mutationFn: async (data: z.infer<typeof instructorSchema.create>) =>
+      await updateInstructor(id, data),
     onSuccess: (data) => {
       if (data.isError) {
         toast.error(data.message)
@@ -275,7 +287,7 @@ export function FormEdit({ id }: FormEditProps) {
         toast.success(data.message)
       }
 
-      router.push('/webinar-batch')
+      router.push('/instructor')
     },
   })
 
@@ -290,10 +302,13 @@ export function FormEdit({ id }: FormEditProps) {
   return (
     <AbstractForm
       initialValues={{
-        ...webinarBatch,
-        start_date: new Date(webinarBatch.start_date),
-        end_date: new Date(webinarBatch.end_date),
-        batch: String(webinarBatch.batch),
+        ...instructor,
+        image: instructor.image ?? '',
+        is_active: validate.boolean(instructor.is_active),
+        is_verified: validate.boolean(instructor.is_verified),
+        balance: validate.number(instructor.balance),
+        total_withdraw: validate.number(instructor.total_withdraw),
+        total_withdraw_fee: validate.number(instructor.total_withdraw_fee),
       }}
       mutation={mutation}
       isEdit={!!id}

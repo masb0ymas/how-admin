@@ -8,6 +8,10 @@ import createFetchApi from '~/lib/action/fetcher'
 type ReqFindUsers = {
   page: number
   pageSize: number
+  roleAs?: string
+  filtered?: {
+    [key: string]: any
+  }[]
 }
 
 async function _axios() {
@@ -19,7 +23,7 @@ async function _axios() {
  * Find Users
  * @returns
  */
-export async function findUsers({ page, pageSize }: ReqFindUsers) {
+export async function findUsers({ page, pageSize, roleAs, filtered }: ReqFindUsers) {
   const api = await _axios()
 
   let data = []
@@ -27,7 +31,15 @@ export async function findUsers({ page, pageSize }: ReqFindUsers) {
   let message = null
   let isError = false
 
-  const queryParams = qs.stringify({ page, pageSize }, { skipNulls: true })
+  let queryParams = qs.stringify({ page, pageSize }, { skipNulls: true })
+
+  if (filtered) {
+    queryParams = `${queryParams}&filtered=${JSON.stringify(filtered)}`
+  }
+
+  if (roleAs) {
+    queryParams = `${queryParams}&roleAs=${roleAs}`
+  }
 
   try {
     const res = await api.get(`/v1/user?${queryParams}`)

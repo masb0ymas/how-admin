@@ -11,6 +11,7 @@ import {
   IconReceipt,
   IconTableShare,
   IconUser,
+  IconUserCheck,
   IconUsers,
 } from '@tabler/icons-react'
 
@@ -31,6 +32,11 @@ const navWebinar = [
 ]
 
 const navWebinarPrivate = [
+  {
+    title: 'Instructor',
+    url: '/instructor',
+    icon: IconUserCheck,
+  },
   {
     title: 'Webinar Batch',
     url: '/webinar-batch',

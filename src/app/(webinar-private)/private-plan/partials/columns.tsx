@@ -9,6 +9,10 @@ import { validate } from '~/lib/validate'
 
 export const columns: ColumnDef<PrivatePlanEntity>[] = [
   {
+    accessorKey: 'webinar_batch.batch',
+    header: ({ column }) => <ColumnSorted column={column} title="Batch" />,
+  },
+  {
     accessorKey: 'webinar_batch.name',
     header: ({ column }) => <ColumnSorted column={column} title="Webinar Batch" />,
   },
@@ -19,6 +23,7 @@ export const columns: ColumnDef<PrivatePlanEntity>[] = [
   {
     accessorKey: 'discount',
     header: ({ column }) => <ColumnSorted column={column} title="Discount" />,
+    cell: ({ row }) => formatCurrencyIDR(row.original.discount),
   },
   {
     accessorKey: 'price',

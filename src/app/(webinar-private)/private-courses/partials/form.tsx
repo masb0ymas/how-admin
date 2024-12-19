@@ -22,17 +22,23 @@ import {
   FormMessage,
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
+import { NumberInput } from '~/components/ui/number-input'
 import SelectInput from '~/components/ui/select-input'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { CategoryEntity } from '~/data/entity/category'
-import { WebinarEntity } from '~/data/entity/webinar'
-import webinarSchema from '~/data/schema/webinar'
+import { InstructorEntity } from '~/data/entity/instructor'
+import { WebinarBatchEntity } from '~/data/entity/webinar-batch'
+import { WebinarPrivateEntity } from '~/data/entity/webinar-private'
+import webinarPrivateSchema from '~/data/schema/webinar-private'
+import { selectChain } from '~/lib/chain'
 import { validate } from '~/lib/validate'
-import { createWebinar, findWebinarById, updateWebinar } from '../action'
+import { findInstructors } from '../../instructor/action'
+import { findWebinarBatches } from '../../webinar-batch/action'
+import { createPrivateCourse, findPrivateCourseById, updatePrivateCourse } from '../action'
 
 type FormProps = {
-  initialValues: z.infer<typeof webinarSchema.create>
+  initialValues: z.infer<typeof webinarPrivateSchema.create>
   mutation: ReturnType<typeof useMutation<any, any, any, any>>
   isEdit?: boolean
 }
@@ -43,19 +49,40 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
   const page = 1
   const pageSize = 100
 
-  const [isFetching, setIsFetching] = useState(true)
+  const [isFetchingCategories, setIsFetchingCategories] = useState(true)
+  const [isFetchingWebinarBatches, setIsFetchingWebinarBatches] = useState(true)
+  const [isFetchingInstructors, setIsFetchingInstructors] = useState(true)
+
   const [categories, setCategories] = useState<CategoryEntity[]>([])
+  const [webinarBatches, setWebinarBatches] = useState<WebinarBatchEntity[]>([])
+  const [instructors, setInstructors] = useState<InstructorEntity[]>([])
 
   const getCategories = useCallback(async (page: number, pageSize: number) => {
     const { data } = await findCategories({ page, pageSize })
     setCategories(data)
 
-    setIsFetching(false)
+    setIsFetchingCategories(false)
+  }, [])
+
+  const getWebinarBatches = useCallback(async (page: number, pageSize: number) => {
+    const { data } = await findWebinarBatches({ page, pageSize })
+    setWebinarBatches(data)
+
+    setIsFetchingWebinarBatches(false)
+  }, [])
+
+  const getInstructors = useCallback(async (page: number, pageSize: number) => {
+    const { data } = await findInstructors({ page, pageSize })
+    setInstructors(data)
+
+    setIsFetchingInstructors(false)
   }, [])
 
   useEffect(() => {
     getCategories(page, pageSize)
-  }, [getCategories, page, pageSize])
+    getWebinarBatches(page, pageSize)
+    getInstructors(page, pageSize)
+  }, [getCategories, getWebinarBatches, getInstructors, page, pageSize])
 
   const selectCategory =
     categories.length > 0
@@ -67,26 +94,35 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
         })
       : []
 
-  const selectChain = [
-    {
-      value: '8453',
-      label: 'Base',
-    },
-    {
-      value: '11155111',
-      label: 'Sepolia',
-    },
-  ]
+  const selectWebinarBatch =
+    webinarBatches.length > 0
+      ? webinarBatches.map((item) => {
+          return {
+            value: item.id,
+            label: item.name,
+          }
+        })
+      : []
 
-  const form = useForm<z.infer<typeof webinarSchema.create>>({
-    resolver: zodResolver(webinarSchema.create),
+  const selectInstructor =
+    instructors.length > 0
+      ? instructors.map((item) => {
+          return {
+            value: item.id,
+            label: `${item.user?.fullname} (${item.user?.email})`,
+          }
+        })
+      : []
+
+  const form = useForm<z.infer<typeof webinarPrivateSchema.create>>({
+    resolver: zodResolver(webinarPrivateSchema.create),
     defaultValues: initialValues,
   })
   const {
     formState: { isSubmitting },
   } = form
 
-  async function onSubmit(data: z.infer<typeof webinarSchema.create>) {
+  async function onSubmit(data: z.infer<typeof webinarPrivateSchema.create>) {
     let values = { ...data }
 
     if (data.recording_url === '-') {
@@ -95,21 +131,68 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
         recording_url: '',
       }
     }
+    console.log(values)
 
     await mutation.mutateAsync(values)
+  }
+
+  if (isFetchingCategories || isFetchingWebinarBatches || isFetchingInstructors) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader />
+      </div>
+    )
   }
 
   return (
     <>
       <div className="mb-4">
-        <h1 className="text-2xl font-bold">{`${isEdit ? 'Edit' : 'Add'} - Mini Courses`}</h1>
-        <h4 className="text-muted-foreground">You can manage mini courses here</h4>
+        <h1 className="text-2xl font-bold">{`${isEdit ? 'Edit' : 'Add'} - Private Courses`}</h1>
+        <h4 className="text-muted-foreground">You can manage private courses here</h4>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
             <div className="lg:col-span-3 space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="webinar_batch_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Webinar Batch</FormLabel>
+                      <SelectInput
+                        options={selectWebinarBatch}
+                        onSelect={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select a webinar batch"
+                      />
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="instructor_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Instructor</FormLabel>
+                      <SelectInput
+                        options={selectInstructor}
+                        onSelect={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select a instructor"
+                      />
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name="title"
@@ -140,22 +223,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 )}
               />
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="speakers"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Speakers</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Input your speakers" {...field} />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="category_id"
@@ -176,21 +244,22 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
 
                 <FormField
                   control={form.control}
-                  name="ipfs_cid"
+                  name="chain_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>IPFS CID</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Input your ipfs cid" {...field} />
-                      </FormControl>
+                      <FormLabel>Chain ID</FormLabel>
+                      <SelectInput
+                        options={selectChain}
+                        onSelect={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select a chain id"
+                      />
 
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="start_date"
@@ -215,24 +284,6 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                       <FormControl>
                         <DateTimePicker date={field.value} setDate={field.onChange} />
                       </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="chain_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Chain ID</FormLabel>
-                      <SelectInput
-                        options={selectChain}
-                        onSelect={field.onChange}
-                        defaultValue={field.value}
-                        placeholder="Select a chain id"
-                      />
 
                       <FormMessage />
                     </FormItem>
@@ -269,6 +320,50 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   </FormItem>
                 )}
               />
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="recording_price"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-3">
+                      <FormLabel>Recording Price</FormLabel>
+                      <FormControl>
+                        <NumberInput
+                          id="recording_price"
+                          value={field.value}
+                          onValueChange={(e) => field.onChange(e.value)}
+                          thousandSeparator=","
+                          placeholder="Enter recording price"
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="recording_period"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-3">
+                      <FormLabel>Recording Period</FormLabel>
+                      <FormControl>
+                        <NumberInput
+                          id="recording_period"
+                          value={field.value}
+                          onValueChange={(e) => field.onChange(e.value)}
+                          thousandSeparator=","
+                          placeholder="Enter recording period"
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
 
             <div className="lg:col-span-1">
@@ -309,9 +404,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                         <FormControl>
                           <CheckboxInput
                             htmlFor="is_active"
-                            label={`Set Webinar - Mini Courses is ${
-                              field.value ? 'ACTIVE' : 'INACTIVE'
-                            }`}
+                            label={`Set Private Course is ${field.value ? 'ACTIVE' : 'INACTIVE'}`}
                             value={field.value}
                             onChange={field.onChange}
                           />
@@ -324,13 +417,13 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
 
                   <FormField
                     control={form.control}
-                    name="is_premium"
+                    name="is_practice"
                     render={({ field }) => (
                       <FormItem className="flex flex-col space-y-3">
                         <FormControl>
                           <CheckboxInput
-                            htmlFor="is_premium"
-                            label={`Set Recording is ${field.value ? 'PREMIUM' : 'FREE'}`}
+                            htmlFor="is_practice"
+                            label={`Set Private Course is ${field.value ? 'PRACTICE' : 'LIVE'}`}
                             value={field.value}
                             onChange={field.onChange}
                           />
@@ -354,7 +447,8 @@ export function FormAdd() {
   const router = useRouter()
 
   const mutation = useMutation({
-    mutationFn: async (data: z.infer<typeof webinarSchema.create>) => await createWebinar(data),
+    mutationFn: async (data: z.infer<typeof webinarPrivateSchema.create>) =>
+      await createPrivateCourse(data),
     onSuccess: (data) => {
       if (data.isError) {
         toast.error(data.message)
@@ -363,24 +457,26 @@ export function FormAdd() {
         toast.success(data.message)
       }
 
-      router.push('/mini-courses')
+      router.push('/private-courses')
     },
   })
 
   return (
     <AbstractForm
       initialValues={{
+        webinar_batch_id: '',
+        instructor_id: '',
         title: '',
         description: '',
-        speakers: '',
         category_id: '',
         start_date: new Date(),
         end_date: new Date(),
         webinar_url: '',
         recording_url: '-',
-        ipfs_cid: '-',
+        recording_price: 0,
+        recording_period: null,
         is_active: true,
-        is_premium: false,
+        is_practice: false,
         chain_id: '8453',
       }}
       mutation={mutation}
@@ -396,39 +492,40 @@ export function FormEdit({ id }: FormEditProps) {
   const router = useRouter()
 
   const [isFetching, setIsFetching] = useState(true)
-  const [webinar, setWebinar] = useState<WebinarEntity>({
+  const [privateCourse, setPrivateCourse] = useState<WebinarPrivateEntity>({
     id: '',
     created_at: '',
     updated_at: '',
     deleted_at: null,
+    webinar_batch_id: '',
+    instructor_id: '',
     title: '',
-    slug: '',
     description: '',
-    speakers: '',
     category_id: '',
-    category: null,
-    start_date: '',
-    end_date: '',
+    start_date: new Date(),
+    end_date: new Date(),
     webinar_url: '',
     recording_url: '-',
-    ipfs_cid: '',
+    recording_price: 0,
+    recording_period: null,
     is_active: true,
-    is_premium: false,
-    chain_id: '',
+    is_practice: false,
+    chain_id: '8453',
   })
 
-  const getWebinar = useCallback(async () => {
-    const { data } = await findWebinarById(id)
-    setWebinar(data)
+  const getPrivateCourse = useCallback(async () => {
+    const { data } = await findPrivateCourseById(id)
+    setPrivateCourse(data)
     setIsFetching(false)
   }, [id])
 
   useEffect(() => {
-    getWebinar()
-  }, [id, getWebinar])
+    getPrivateCourse()
+  }, [id, getPrivateCourse])
 
   const mutation = useMutation({
-    mutationFn: async (data: z.infer<typeof webinarSchema.create>) => await updateWebinar(id, data),
+    mutationFn: async (data: z.infer<typeof webinarPrivateSchema.create>) =>
+      await updatePrivateCourse(id, data),
     onSuccess: (data) => {
       if (data.isError) {
         toast.error(data.message)
@@ -437,7 +534,7 @@ export function FormEdit({ id }: FormEditProps) {
         toast.success(data.message)
       }
 
-      router.push('/mini-courses')
+      router.push('/private-courses')
     },
   })
 
@@ -452,12 +549,15 @@ export function FormEdit({ id }: FormEditProps) {
   return (
     <AbstractForm
       initialValues={{
-        ...webinar,
-        recording_url: webinar.recording_url || '-',
-        start_date: new Date(webinar.start_date),
-        end_date: new Date(webinar.end_date),
-        is_active: validate.boolean(webinar.is_active),
-        is_premium: validate.boolean(webinar.is_premium),
+        ...privateCourse,
+        description: privateCourse.description || '',
+        recording_url: privateCourse.recording_url || '-',
+        recording_price: validate.number(privateCourse.recording_price),
+        recording_period: validate.empty(privateCourse.recording_period),
+        start_date: new Date(privateCourse.start_date),
+        end_date: new Date(privateCourse.end_date),
+        is_active: validate.boolean(privateCourse.is_active),
+        is_practice: validate.boolean(privateCourse.is_practice),
       }}
       mutation={mutation}
       isEdit={!!id}
