@@ -11,6 +11,7 @@ import { z } from 'zod'
 import { findCategories } from '~/app/(setting)/category/action'
 import Loader from '~/components/custom/loader'
 import { Button } from '~/components/ui/button'
+import CheckboxInput from '~/components/ui/checkbox-input'
 import { DateTimePicker } from '~/components/ui/date-time-picker'
 import {
   Form,
@@ -21,13 +22,7 @@ import {
   FormMessage,
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '~/components/ui/select'
+import SelectInput from '~/components/ui/select-input'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { CategoryEntity } from '~/data/entity/category'
@@ -35,9 +30,6 @@ import { WebinarEntity } from '~/data/entity/webinar'
 import webinarSchema from '~/data/schema/webinar'
 import { validate } from '~/lib/validate'
 import { createWebinar, findWebinarById, updateWebinar } from '../action'
-import { Checkbox } from '~/components/ui/checkbox'
-import CheckboxInput from '~/components/ui/checkbox-input'
-import SelectInput from '~/components/ui/select-input'
 
 type FormProps = {
   initialValues: z.infer<typeof webinarSchema.create>

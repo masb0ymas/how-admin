@@ -49,7 +49,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
     const { data } = await findUsers({
       page,
       pageSize,
-      filtered: [{ id: 'role_id', value: ConstRole.ID_USER }],
+      roleAs: ConstRole.INSTRUCTOR,
     })
     setUsers(data)
 
