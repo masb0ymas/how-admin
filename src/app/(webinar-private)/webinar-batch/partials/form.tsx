@@ -138,32 +138,13 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     )}
                   />
                 </div>
-
-                <FormField
-                  control={form.control}
-                  name="is_active"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col space-y-3">
-                      <FormLabel>Status</FormLabel>
-                      <FormControl>
-                        <CheckboxInput
-                          label="Set active this webinar batch"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </div>
 
             <div className="lg:col-span-1">
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-4">
                 <h3 className="text-lg font-semibold">Actions</h3>
-                <Separator className="my-4" />
+                <Separator />
 
                 <div className="flex flex-row justify-center gap-4">
                   <Button
@@ -183,6 +164,31 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     {isSubmitting && <IconLoader className="mr-1 h-4 w-4 animate-spin" />}
                     {isSubmitting ? 'Submitting...' : 'Submit'}
                   </Button>
+                </div>
+
+                <Separator />
+
+                <div className="flex flex-col gap-4">
+                  <span className="text-sm font-medium">Status</span>
+
+                  <FormField
+                    control={form.control}
+                    name="is_active"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormControl>
+                          <CheckboxInput
+                            htmlFor="is_active"
+                            label={`Set Webinar batch is ${field.value ? 'ACTIVE' : 'INACTIVE'}`}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </div>
             </div>

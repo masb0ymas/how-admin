@@ -306,41 +306,49 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
 
                 <Separator />
 
-                <FormField
-                  control={form.control}
-                  name="is_active"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col space-y-3">
-                      <FormControl>
-                        <CheckboxInput
-                          label="Set active this webinar mini course"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
+                <div className="flex flex-col gap-4">
+                  <span className="text-sm font-medium">Status</span>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="is_active"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormControl>
+                          <CheckboxInput
+                            htmlFor="is_active"
+                            label={`Set Webinar - Mini Courses is ${
+                              field.value ? 'ACTIVE' : 'INACTIVE'
+                            }`}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
 
-                <FormField
-                  control={form.control}
-                  name="is_premium"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col space-y-3">
-                      <FormControl>
-                        <CheckboxInput
-                          label="Set premium recording this mini course"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="is_premium"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormControl>
+                          <CheckboxInput
+                            htmlFor="is_premium"
+                            label={`Set Recording is ${field.value ? 'PREMIUM' : 'FREE'}`}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </div>
           </div>

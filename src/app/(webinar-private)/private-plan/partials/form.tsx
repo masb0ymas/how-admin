@@ -199,9 +199,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name={`features.${index}.text`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className={index !== 0 ? 'sr-only' : ''}>
-                          Feature
-                        </FormLabel>
+                        <FormLabel className={index !== 0 ? 'sr-only' : ''}>Feature</FormLabel>
                         <FormControl>
                           <div className="flex items-center space-x-2">
                             <Input placeholder={`Input your feature ${index + 1}`} {...field} />
@@ -261,24 +259,30 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   </Button>
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="is_active"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col space-y-3">
-                      <FormLabel>Status</FormLabel>
-                      <FormControl>
-                        <CheckboxInput
-                          label="Set active this webinar batch"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
+                <Separator />
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="flex flex-col gap-4">
+                  <span className="text-sm font-medium">Status</span>
+
+                  <FormField
+                    control={form.control}
+                    name="is_active"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormControl>
+                          <CheckboxInput
+                            htmlFor="is_active"
+                            label={`Set Private plan is ${field.value ? 'ACTIVE' : 'INACTIVE'}`}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </div>
           </div>
