@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
 const create = z.object({
-  instructor: z
+  instructor_id: z
     .string({
-      required_error: 'instructor is required',
-      invalid_type_error: 'instructor must be a string',
+      required_error: 'instructor_id is required',
+      invalid_type_error: 'instructor_id must be a string',
     })
-    .min(2, `instructor can't be empty`),
+    .min(2, `instructor_id can't be empty`),
 
   name: z
     .string({
