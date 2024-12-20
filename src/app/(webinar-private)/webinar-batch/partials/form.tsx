@@ -22,9 +22,12 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { NumberInput } from '~/components/ui/number-input'
+import SelectInput from '~/components/ui/select-input'
 import { Separator } from '~/components/ui/separator'
+import { InstructorEntity } from '~/data/entity/instructor'
 import { WebinarBatchEntity } from '~/data/entity/webinar-batch'
 import webinarBatchSchema from '~/data/schema/webinar-batch'
+import { findInstructors } from '../../instructor/action'
 import { createWebinarBatch, findWebinarBatchById, updateWebinarBatch } from '../action'
 
 type FormProps = {
@@ -36,6 +39,33 @@ type FormProps = {
 function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
   const router = useRouter()
 
+  const page = 1
+  const pageSize = 100
+
+  const [isFetchingInstructors, setIsFetchingInstructors] = useState(true)
+  const [instructors, setInstructors] = useState<InstructorEntity[]>([])
+
+  const getInstructors = useCallback(async (page: number, pageSize: number) => {
+    const { data } = await findInstructors({ page, pageSize })
+    setInstructors(data)
+
+    setIsFetchingInstructors(false)
+  }, [])
+
+  useEffect(() => {
+    getInstructors(page, pageSize)
+  }, [getInstructors, page, pageSize])
+
+  const selectInstructor =
+    instructors.length > 0
+      ? instructors.map((item) => {
+          return {
+            value: item.id,
+            label: `${item.user?.fullname} (${item.user?.email})`,
+          }
+        })
+      : []
+
   const form = useForm<z.infer<typeof webinarBatchSchema.create>>({
     resolver: zodResolver(webinarBatchSchema.create),
     defaultValues: initialValues,
@@ -46,6 +76,14 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
 
   async function onSubmit(data: z.infer<typeof webinarBatchSchema.create>) {
     await mutation.mutateAsync(data)
+  }
+
+  if (isFetchingInstructors) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader />
+      </div>
+    )
   }
 
   return (
@@ -60,35 +98,40 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
             <div className="lg:col-span-3">
               <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Input your webinar batch name" {...field} />
-                      </FormControl>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Input your webinar batch name" {...field} />
+                        </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="instructor"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Instructor</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Input your webinar batch instructor" {...field} />
-                      </FormControl>
+                  <FormField
+                    control={form.control}
+                    name="instructor_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Instructor</FormLabel>
+                        <SelectInput
+                          options={selectInstructor}
+                          onSelect={field.onChange}
+                          defaultValue={field.value}
+                          placeholder="Select a instructor"
+                        />
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   <FormField
@@ -158,7 +201,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   </Button>
                   <Button
                     variant={'default'}
-                    className='w-full rounded-lg font-semibold'
+                    className="w-full rounded-lg font-semibold"
                     type="submit"
                     disabled={isSubmitting}
                   >
@@ -222,7 +265,7 @@ export function FormAdd() {
     <AbstractForm
       initialValues={{
         name: '',
-        instructor: '',
+        instructor_id: '',
         batch: '',
         start_date: new Date(),
         end_date: new Date(),
@@ -247,7 +290,7 @@ export function FormEdit({ id }: FormEditProps) {
     updated_at: '',
     deleted_at: null,
     name: '',
-    instructor: '',
+    instructor_id: '',
     batch: '',
     start_date: new Date(),
     end_date: new Date(),

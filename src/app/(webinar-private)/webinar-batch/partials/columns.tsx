@@ -9,7 +9,7 @@ import { validate } from '~/lib/validate'
 
 export const columns: ColumnDef<WebinarBatchEntity>[] = [
   {
-    accessorKey: 'instructor',
+    accessorKey: 'instructor.user.fullname',
     header: ({ column }) => <ColumnSorted column={column} title="Instructor" />,
   },
   {
