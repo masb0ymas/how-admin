@@ -1,9 +1,12 @@
+import { UserEntity } from './user'
+
 export type TransactionEntity = {
   id: string
   created_at: string
   updated_at: string
   deleted_at: string | null
   user_id: string
+  user: UserEntity | null
   provider: string // like a midtrans | xendit | stripe | lemonsqueezy
   voucher_code: string | null
   voucher_nominal: number

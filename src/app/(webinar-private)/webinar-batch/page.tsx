@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function SettingWebinarBatchPage() {
+export default function WebinarBatchPage() {
   return (
     <section className="container mx-auto">
       <div className="mb-4">
