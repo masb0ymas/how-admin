@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import AppLayout from '~/components/layout'
-import { auth } from '~/lib/auth'
+import { auth } from '~/lib/auth/handler'
 
 export const metadata: Metadata = {
   title: 'Home',

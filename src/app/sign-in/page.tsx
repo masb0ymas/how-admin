@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { BorderBeam } from '~/components/ui/border-beam'
-import { auth } from '~/lib/auth'
+import { auth } from '~/lib/auth/handler'
 import SignInForm from './partials/sign-in-form'
 
 export const metadata: Metadata = {

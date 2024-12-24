@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { PropsWithChildren } from 'react'
 import AppLayout from '~/components/layout'
-import { auth } from '~/lib/auth'
+import { auth } from '~/lib/auth/handler'
 
 type IProps = PropsWithChildren
 
