@@ -15,6 +15,13 @@ const create = z.object({
     })
     .min(2, `name can't be empty`),
 
+  type: z
+    .string({
+      required_error: 'type is required',
+      invalid_type_error: 'type must be a string',
+    })
+    .min(2, `type can't be empty`),
+
   batch: z
     .string({
       required_error: 'batch is required',

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { PropsWithChildren } from 'react'
 import AppLayout from '~/components/layout'
-import { auth } from '~/lib/auth'
+import { auth } from '~/lib/auth/handler'
 
 type IProps = PropsWithChildren
 
@@ -14,7 +14,9 @@ export default async function AccountLayout({ children }: IProps) {
 
   return (
     <AppLayout>
-      <div className="bg-gradient-to-br from-sidebar to-sidebar/70 p-4 sm:p-6 rounded-xl border-[1px] shadow-lg">{children}</div>
+      <div className="bg-gradient-to-br from-sidebar to-sidebar/70 p-4 sm:p-6 rounded-xl border-[1px] shadow-lg">
+        {children}
+      </div>
     </AppLayout>
   )
 }

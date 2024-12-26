@@ -5,6 +5,7 @@ import ColumnSorted from '~/components/custom/data-table/column-sorted'
 import { Checkbox } from '~/components/ui/checkbox'
 import { WebinarBatchEntity } from '~/data/entity/webinar-batch'
 import { formatLocalDate } from '~/lib/date'
+import { capitalizeFirstLetter } from '~/lib/string'
 import { validate } from '~/lib/validate'
 
 export const columns: ColumnDef<WebinarBatchEntity>[] = [
@@ -19,6 +20,11 @@ export const columns: ColumnDef<WebinarBatchEntity>[] = [
   {
     accessorKey: 'batch',
     header: ({ column }) => <ColumnSorted column={column} title="Batch" />,
+  },
+  {
+    accessorKey: 'type',
+    header: ({ column }) => <ColumnSorted column={column} title="Type" />,
+    cell: ({ row }) => capitalizeFirstLetter(row.original.type),
   },
   {
     accessorKey: 'start_date',

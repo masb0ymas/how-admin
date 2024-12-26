@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconArrowLeft, IconLoader } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
-import _ from 'lodash'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -28,12 +27,25 @@ import { Separator } from '~/components/ui/separator'
 import { InstructorEntity } from '~/data/entity/instructor'
 import { WebinarBatchEntity } from '~/data/entity/webinar-batch'
 import webinarBatchSchema from '~/data/schema/webinar-batch'
-import { capitalizeFirstLetter } from '~/lib/string'
 import { findInstructors } from '../../instructor/action'
-import { createWebinarBatch, findWebinarBatchById, updateWebinarBatch } from '../action'
+import webinarPrivateMemberSchema from '~/data/schema/webinar-private-member'
+import {
+  createWebinarPrivateMember,
+  findWebinarPrivateMemberById,
+  updateWebinarPrivateMember,
+} from '../action'
+import { WebinarPrivateMemberEntity } from '~/data/entity/webinar-private-member'
+import { validate } from '~/lib/validate'
+import { UserEntity } from '~/data/entity/user'
+import { WebinarPrivateEntity } from '~/data/entity/webinar-private'
+import { findUsers } from '~/app/(account)/user-management/action'
+import { findWebinarBatches } from '../../webinar-batch/action'
+import { findPrivateCourses } from '../../private-courses/action'
+import ConstRole from '~/lib/constant/role'
+import _ from 'lodash'
 
 type FormProps = {
-  initialValues: z.infer<typeof webinarBatchSchema.create>
+  initialValues: z.infer<typeof webinarPrivateMemberSchema.create>
   mutation: ReturnType<typeof useMutation<any, any, any, any>>
   isEdit?: boolean
 }
@@ -44,50 +56,95 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
   const page = 1
   const pageSize = 100
 
-  const [isFetchingInstructors, setIsFetchingInstructors] = useState(true)
-  const [instructors, setInstructors] = useState<InstructorEntity[]>([])
+  const [isFetchingUsers, setIsFetchingUsers] = useState(true)
+  const [isFetchingWebinarBatches, setIsFetchingWebinarBatches] = useState(true)
+  const [isFetchingWebinarPrivate, setIsFetchingWebinarPrivate] = useState(true)
 
-  const getInstructors = useCallback(async (page: number, pageSize: number) => {
-    const { data } = await findInstructors({ page, pageSize })
-    setInstructors(data)
+  const [users, setUsers] = useState<UserEntity[]>([])
+  const [webinarBatches, setWebinarBatches] = useState<WebinarBatchEntity[]>([])
+  const [webinarPrivate, setWebinarPrivate] = useState<WebinarPrivateEntity[]>([])
 
-    setIsFetchingInstructors(false)
+  const getUsers = useCallback(async (page: number, pageSize: number) => {
+    const { data } = await findUsers({
+      page,
+      pageSize,
+      filtered: [{ id: 'role_id', value: ConstRole.ID_USER }],
+    })
+    setUsers(data)
+    setIsFetchingUsers(false)
+  }, [])
+
+  const getWebinarBatches = useCallback(async (page: number, pageSize: number) => {
+    const { data } = await findWebinarBatches({ page, pageSize })
+    setWebinarBatches(data)
+    setIsFetchingWebinarBatches(false)
+  }, [])
+
+  const getWebinarPrivate = useCallback(async (page: number, pageSize: number) => {
+    const { data } = await findPrivateCourses({ page, pageSize })
+    setWebinarPrivate(data)
+    setIsFetchingWebinarPrivate(false)
   }, [])
 
   useEffect(() => {
-    getInstructors(page, pageSize)
-  }, [getInstructors, page, pageSize])
+    getUsers(page, pageSize)
+    getWebinarBatches(page, pageSize)
+    getWebinarPrivate(page, pageSize)
+  }, [getUsers, getWebinarBatches, getWebinarPrivate, page, pageSize])
 
-  const selectInstructor =
-    instructors.length > 0
-      ? instructors.map((item) => {
+  const selectUsers =
+    users.length > 0
+      ? users
+          .filter((item) => item.fullname !== '-')
+          .map((item) => {
+            return {
+              value: item.id,
+              label: `${item.fullname} (${item.email})`,
+            }
+          })
+      : []
+
+  const selectWebinarBatches =
+    webinarBatches.length > 0
+      ? webinarBatches.map((item) => {
           return {
             value: item.id,
-            label: `${item.user?.fullname} (${item.user?.email})`,
+            label: `${item.name}`,
           }
         })
       : []
 
-  const selectType = ['private', 'exclusive', 'express'].map((item) => {
-    return {
-      value: _.toUpper(item),
-      label: capitalizeFirstLetter(item),
-    }
-  })
+  const selectWebinarPrivate =
+    webinarPrivate.length > 0
+      ? webinarPrivate.map((item) => {
+          return {
+            value: item.id,
+            label: `${item.title} - Instructor: ${item.instructor?.user?.fullname}`,
+          }
+        })
+      : []
 
-  const form = useForm<z.infer<typeof webinarBatchSchema.create>>({
-    resolver: zodResolver(webinarBatchSchema.create),
+  const form = useForm<z.infer<typeof webinarPrivateMemberSchema.create>>({
+    resolver: zodResolver(webinarPrivateMemberSchema.create),
     defaultValues: initialValues,
   })
   const {
     formState: { isSubmitting },
   } = form
 
-  async function onSubmit(data: z.infer<typeof webinarBatchSchema.create>) {
-    await mutation.mutateAsync(data)
+  async function onSubmit(data: z.infer<typeof webinarPrivateMemberSchema.create>) {
+    const checkWebinarPrivateId =
+      _.isEmpty(data.webinar_private_id) || _.isNil(data.webinar_private_id)
+
+    const newFomData = {
+      ...data,
+      webinar_private_id: !checkWebinarPrivateId ? data.webinar_private_id : null,
+    }
+
+    await mutation.mutateAsync(newFomData)
   }
 
-  if (isFetchingInstructors) {
+  if (isFetchingUsers || isFetchingWebinarBatches || isFetchingWebinarPrivate) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loader />
@@ -110,13 +167,16 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="user_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Input your webinar batch name" {...field} />
-                        </FormControl>
+                        <FormLabel>User</FormLabel>
+                        <SelectInput
+                          options={selectUsers}
+                          onSelect={field.onChange}
+                          defaultValue={field.value}
+                          placeholder="Select a user"
+                        />
 
                         <FormMessage />
                       </FormItem>
@@ -125,22 +185,42 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
 
                   <FormField
                     control={form.control}
-                    name="instructor_id"
+                    name="webinar_batch_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Instructor</FormLabel>
+                        <FormLabel>Webinar Batch</FormLabel>
                         <SelectInput
-                          options={selectInstructor}
+                          options={selectWebinarBatches}
                           onSelect={field.onChange}
                           defaultValue={field.value}
-                          placeholder="Select a instructor"
+                          placeholder="Select a webinar batch"
                         />
 
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+                </div>
 
+                <FormField
+                  control={form.control}
+                  name="webinar_private_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Webinar Private</FormLabel>
+                      <SelectInput
+                        options={selectWebinarPrivate}
+                        onSelect={field.onChange}
+                        defaultValue={String(field.value)}
+                        placeholder="Select a webinar private"
+                      />
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="start_date"
@@ -161,45 +241,6 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                       <FormItem className="flex flex-col space-y-3">
                         <FormLabel>End Date</FormLabel>
                         <CalendarInput value={field.value} onChange={field.onChange} />
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="batch"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>Batch</FormLabel>
-                        <FormControl>
-                          <NumberInput
-                            id="batch"
-                            value={field.value}
-                            onValueChange={(e) => field.onChange(e.value)}
-                            thousandSeparator=","
-                            placeholder="Enter batch"
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Type</FormLabel>
-                        <SelectInput
-                          options={selectType}
-                          onSelect={field.onChange}
-                          defaultValue={field.value}
-                          placeholder="Select a type"
-                        />
 
                         <FormMessage />
                       </FormItem>
@@ -242,13 +283,13 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
 
                   <FormField
                     control={form.control}
-                    name="is_active"
+                    name="is_alumni"
                     render={({ field }) => (
                       <FormItem className="flex flex-col space-y-3">
                         <FormControl>
                           <CheckboxInput
-                            htmlFor="is_active"
-                            label={`Set Webinar batch is ${field.value ? 'ACTIVE' : 'INACTIVE'}`}
+                            htmlFor="is_alumni"
+                            label={`Set Membership is ${field.value ? 'ALUMNI' : 'MEMBER'}`}
                             value={field.value}
                             onChange={field.onChange}
                           />
@@ -272,8 +313,8 @@ export function FormAdd() {
   const router = useRouter()
 
   const mutation = useMutation({
-    mutationFn: async (data: z.infer<typeof webinarBatchSchema.create>) =>
-      await createWebinarBatch(data),
+    mutationFn: async (data: z.infer<typeof webinarPrivateMemberSchema.create>) =>
+      await createWebinarPrivateMember(data),
     onSuccess: (data) => {
       if (data.isError) {
         toast.error(data.message)
@@ -282,20 +323,20 @@ export function FormAdd() {
         toast.success(data.message)
       }
 
-      router.push('/webinar-batch')
+      router.push('/private-membership')
     },
   })
 
   return (
     <AbstractForm
       initialValues={{
-        name: '',
-        instructor_id: '',
-        batch: '',
-        type: '',
+        user_id: '',
+        webinar_batch_id: '',
+        webinar_private_id: '',
+        certificate_url: '',
         start_date: new Date(),
         end_date: new Date(),
-        is_active: true,
+        is_alumni: false,
       }}
       mutation={mutation}
     />
@@ -310,34 +351,33 @@ export function FormEdit({ id }: FormEditProps) {
   const router = useRouter()
 
   const [isFetching, setIsFetching] = useState(true)
-  const [webinarBatch, setWebinarBatch] = useState<WebinarBatchEntity>({
+  const [membership, setMembership] = useState<WebinarPrivateMemberEntity>({
     id: '',
     created_at: '',
     updated_at: '',
     deleted_at: null,
-    name: '',
-    instructor_id: '',
-    batch: '',
-    type: '',
+    user_id: '',
+    webinar_batch_id: '',
+    webinar_private_id: '',
+    certificate_url: '',
     start_date: new Date(),
     end_date: new Date(),
-    duration: '',
-    is_active: true,
+    is_alumni: false,
   })
 
-  const getWebinarBatch = useCallback(async () => {
-    const { data } = await findWebinarBatchById(id)
-    setWebinarBatch(data)
+  const getMembership = useCallback(async () => {
+    const { data } = await findWebinarPrivateMemberById(id)
+    setMembership(data)
     setIsFetching(false)
   }, [id])
 
   useEffect(() => {
-    getWebinarBatch()
-  }, [id, getWebinarBatch])
+    getMembership()
+  }, [id, getMembership])
 
   const mutation = useMutation({
-    mutationFn: async (data: z.infer<typeof webinarBatchSchema.create>) =>
-      await updateWebinarBatch(id, data),
+    mutationFn: async (data: z.infer<typeof webinarPrivateMemberSchema.create>) =>
+      await updateWebinarPrivateMember(id, data),
     onSuccess: (data) => {
       if (data.isError) {
         toast.error(data.message)
@@ -346,7 +386,7 @@ export function FormEdit({ id }: FormEditProps) {
         toast.success(data.message)
       }
 
-      router.push('/webinar-batch')
+      router.push('/private-membership')
     },
   })
 
@@ -358,13 +398,21 @@ export function FormEdit({ id }: FormEditProps) {
     )
   }
 
+  const end_date = validate.isDate(new Date(String(membership.end_date)))
+    ? new Date(String(membership.end_date))
+    : undefined
+
+  const checkWebinarPrivateId =
+    _.isEmpty(membership.webinar_private_id) || _.isNil(membership.webinar_private_id)
+
   return (
     <AbstractForm
       initialValues={{
-        ...webinarBatch,
-        start_date: new Date(webinarBatch.start_date),
-        end_date: new Date(webinarBatch.end_date),
-        batch: String(webinarBatch.batch),
+        ...membership,
+        webinar_private_id: !checkWebinarPrivateId ? String(membership.webinar_private_id) : '',
+        start_date: new Date(membership.start_date),
+        end_date: end_date,
+        is_alumni: validate.boolean(membership.is_alumni),
       }}
       mutation={mutation}
       isEdit={!!id}
