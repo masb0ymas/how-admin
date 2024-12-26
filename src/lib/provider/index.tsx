@@ -14,7 +14,7 @@ export default function Provider({ children }: IProps) {
         <WrapperReactQuery>
           <WrapperNProgress>
             {children}
-            <Toaster position="top-center" reverseOrder={true} />
+            <Toaster position="top-right" reverseOrder={true} />
           </WrapperNProgress>
         </WrapperReactQuery>
       </SessionProvider>
