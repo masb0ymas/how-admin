@@ -9,6 +9,7 @@ export type WebinarBatchEntity = {
   instructor?: InstructorEntity
   name: string
   batch: string
+  type: string
   start_date: Date
   end_date: Date
   duration: string // 16 weeks

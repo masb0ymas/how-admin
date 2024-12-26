@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconArrowLeft, IconLoader } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
+import _ from 'lodash'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -27,6 +28,7 @@ import { Separator } from '~/components/ui/separator'
 import { InstructorEntity } from '~/data/entity/instructor'
 import { WebinarBatchEntity } from '~/data/entity/webinar-batch'
 import webinarBatchSchema from '~/data/schema/webinar-batch'
+import { capitalizeFirstLetter } from '~/lib/string'
 import { findInstructors } from '../../instructor/action'
 import { createWebinarBatch, findWebinarBatchById, updateWebinarBatch } from '../action'
 
@@ -65,6 +67,13 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
           }
         })
       : []
+
+  const selectType = ['private', 'exclusive', 'express'].map((item) => {
+    return {
+      value: _.toUpper(item),
+      label: capitalizeFirstLetter(item),
+    }
+  })
 
   const form = useForm<z.infer<typeof webinarBatchSchema.create>>({
     resolver: zodResolver(webinarBatchSchema.create),
@@ -131,9 +140,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                       </FormItem>
                     )}
                   />
-                </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="start_date"
@@ -175,6 +182,24 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                             placeholder="Enter batch"
                           />
                         </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Type</FormLabel>
+                        <SelectInput
+                          options={selectType}
+                          onSelect={field.onChange}
+                          defaultValue={field.value}
+                          placeholder="Select a type"
+                        />
 
                         <FormMessage />
                       </FormItem>
@@ -267,6 +292,7 @@ export function FormAdd() {
         name: '',
         instructor_id: '',
         batch: '',
+        type: '',
         start_date: new Date(),
         end_date: new Date(),
         is_active: true,
@@ -292,6 +318,7 @@ export function FormEdit({ id }: FormEditProps) {
     name: '',
     instructor_id: '',
     batch: '',
+    type: '',
     start_date: new Date(),
     end_date: new Date(),
     duration: '',
