@@ -24,7 +24,13 @@ export const columns: ColumnDef<WebinarBatchEntity>[] = [
   {
     accessorKey: 'type',
     header: ({ column }) => <ColumnSorted column={column} title="Type" />,
-    cell: ({ row }) => capitalizeFirstLetter(row.original.type),
+    cell: ({ row }) => {
+      if (row.original.type) {
+        return capitalizeFirstLetter(row.original.type)
+      }
+
+      return '-'
+    },
   },
   {
     accessorKey: 'start_date',
