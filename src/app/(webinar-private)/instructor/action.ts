@@ -10,6 +10,7 @@ import createFetchApi from '~/lib/action/fetcher'
 type ReqFindInstructors = {
   page: number
   pageSize: number
+  webinar_batch_id?: string
 }
 
 async function _axios() {
@@ -21,7 +22,7 @@ async function _axios() {
  * Find Private Plans
  * @returns
  */
-export async function findInstructors({ page, pageSize }: ReqFindInstructors) {
+export async function findInstructors({ page, pageSize, webinar_batch_id }: ReqFindInstructors) {
   const api = await _axios()
 
   let data = []
@@ -29,7 +30,7 @@ export async function findInstructors({ page, pageSize }: ReqFindInstructors) {
   let message = null
   let isError = false
 
-  const queryParams = qs.stringify({ page, pageSize }, { skipNulls: true })
+  const queryParams = qs.stringify({ page, pageSize, webinar_batch_id }, { skipNulls: true })
 
   try {
     const res = await api.get(`/v1/instructor?${queryParams}`)
