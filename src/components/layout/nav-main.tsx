@@ -14,9 +14,9 @@ export function NavMain() {
   const pathname = usePathname()
 
   return (
-    <SidebarGroup>
+    <SidebarGroup className='space-y-4'>
       {sidebarMenu.map((menu) => (
-        <div className="mb-2" key={menu.title}>
+        <nav key={menu.title}>
           <SidebarGroupLabel>{menu.title}</SidebarGroupLabel>
           {menu.items.map((item) => {
             const isActive = item.url === '/' ? pathname === '/' : pathname.startsWith(item.url)
@@ -37,7 +37,7 @@ export function NavMain() {
               </SidebarMenu>
             )
           })}
-        </div>
+        </nav>
       ))}
     </SidebarGroup>
   )
