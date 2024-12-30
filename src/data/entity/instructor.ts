@@ -7,6 +7,7 @@ export type InstructorEntity = {
   deleted_at: string | null
   user_id: string
   user?: UserEntity
+  status: string
   bio: string
   image: string | null
   is_active: boolean

@@ -11,6 +11,13 @@ const create = z.object({
     .uuid({ message: 'user_id invalid uuid format' })
     .min(2, `user_id can't be empty`),
 
+  status: z
+    .string({
+      required_error: 'status is required',
+      invalid_type_error: 'status must be a string',
+    })
+    .min(2, `status can't be empty`),
+
   bio: z
     .string({
       required_error: 'bio is required',

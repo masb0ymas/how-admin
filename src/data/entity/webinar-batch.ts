@@ -7,6 +7,8 @@ export type WebinarBatchEntity = {
   deleted_at: string | null
   instructor_id: string
   instructor?: InstructorEntity
+  assistant_id: string
+  assistant?: InstructorEntity
   name: string
   batch: string
   type: string
