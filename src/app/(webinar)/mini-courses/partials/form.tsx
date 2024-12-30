@@ -99,6 +99,14 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
     await mutation.mutateAsync(values)
   }
 
+  if (isFetching) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader />
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="mb-4">
@@ -115,7 +123,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel required>Title</FormLabel>
                     <FormControl>
                       <Input placeholder="Input your title" {...field} />
                     </FormControl>
@@ -130,7 +138,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel required>Description</FormLabel>
                     <FormControl>
                       <Textarea rows={4} placeholder="Input your description" {...field} />
                     </FormControl>
@@ -146,7 +154,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="speakers"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Speakers</FormLabel>
+                      <FormLabel required>Speakers</FormLabel>
                       <FormControl>
                         <Input placeholder="Input your speakers" {...field} />
                       </FormControl>
@@ -161,7 +169,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="category_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <FormLabel required>Category</FormLabel>
                       <SelectInput
                         options={selectCategory}
                         onSelect={field.onChange}
@@ -179,7 +187,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="ipfs_cid"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>IPFS CID</FormLabel>
+                      <FormLabel optional>IPFS CID</FormLabel>
                       <FormControl>
                         <Input placeholder="Input your ipfs cid" {...field} />
                       </FormControl>
@@ -196,7 +204,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="start_date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Start Date</FormLabel>
+                      <FormLabel required>Start Date</FormLabel>
                       <FormControl>
                         <DateTimePicker date={field.value} setDate={field.onChange} />
                       </FormControl>
@@ -211,7 +219,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="end_date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>End Date</FormLabel>
+                      <FormLabel required>End Date</FormLabel>
                       <FormControl>
                         <DateTimePicker date={field.value} setDate={field.onChange} />
                       </FormControl>
@@ -226,7 +234,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="chain_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Chain ID</FormLabel>
+                      <FormLabel optional>Chain ID</FormLabel>
                       <SelectInput
                         options={selectChain}
                         onSelect={field.onChange}
@@ -245,7 +253,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 name="webinar_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Webinar URL</FormLabel>
+                    <FormLabel required>Webinar URL</FormLabel>
                     <FormControl>
                       <Input placeholder="Input your webinar url" {...field} />
                     </FormControl>
@@ -260,7 +268,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 name="recording_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Recording URL</FormLabel>
+                    <FormLabel optional>Recording URL</FormLabel>
                     <FormControl>
                       <Input placeholder="Input your recording url" {...field} />
                     </FormControl>
@@ -288,7 +296,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   </Button>
                   <Button
                     variant={'default'}
-                    className='w-full rounded-lg font-semibold'
+                    className="w-full rounded-lg font-semibold"
                     type="submit"
                     disabled={isSubmitting}
                   >
@@ -300,7 +308,10 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 <Separator />
 
                 <div className="flex flex-col gap-4">
-                  <span className="text-sm font-medium">Status</span>
+                  <div className="space-x-1">
+                    <span className="text-sm font-medium">Status</span>
+                    <span className="text-sm text-muted-foreground">(optional)</span>
+                  </div>
 
                   <FormField
                     control={form.control}

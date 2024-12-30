@@ -104,7 +104,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name="webinar_batch_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Webinar Batch</FormLabel>
+                        <FormLabel required>Webinar Batch</FormLabel>
                         <SelectInput
                           options={selectWebinarBatch}
                           onSelect={field.onChange}
@@ -122,7 +122,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title</FormLabel>
+                        <FormLabel required>Title</FormLabel>
                         <FormControl>
                           <Input placeholder="Input your private plan title" {...field} />
                         </FormControl>
@@ -138,7 +138,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel required>Description</FormLabel>
                       <FormControl>
                         <Textarea rows={4} placeholder="Input your description" {...field} />
                       </FormControl>
@@ -154,7 +154,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name="discount"
                     render={({ field }) => (
                       <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>Discount</FormLabel>
+                        <FormLabel optional>Discount</FormLabel>
                         <FormControl>
                           <NumberInput
                             id="discount"
@@ -175,7 +175,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name="price"
                     render={({ field }) => (
                       <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>Price</FormLabel>
+                        <FormLabel required>Price</FormLabel>
                         <FormControl>
                           <NumberInput
                             id="price"
@@ -199,7 +199,9 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name={`features.${index}.text`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className={index !== 0 ? 'sr-only' : ''}>Feature</FormLabel>
+                        <FormLabel className={index !== 0 ? 'sr-only' : ''} required>
+                          Feature
+                        </FormLabel>
                         <FormControl>
                           <div className="flex items-center space-x-2">
                             <Input placeholder={`Input your feature ${index + 1}`} {...field} />
@@ -251,7 +253,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   </Button>
                   <Button
                     variant={'default'}
-                    className='w-full rounded-lg font-semibold'
+                    className="w-full rounded-lg font-semibold"
                     type="submit"
                     disabled={isSubmitting}
                   >
@@ -263,7 +265,10 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 <Separator />
 
                 <div className="flex flex-col gap-4">
-                  <span className="text-sm font-medium">Status</span>
+                  <div className="space-x-1">
+                    <span className="text-sm font-medium">Status</span>
+                    <span className="text-sm text-muted-foreground">(optional)</span>
+                  </div>
 
                   <FormField
                     control={form.control}
