@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconArrowLeft, IconLoader } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
+import _ from 'lodash'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -46,6 +47,16 @@ type FormProps = {
 function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
   const router = useRouter()
 
+  const form = useForm<z.infer<typeof webinarPrivateSchema.create>>({
+    resolver: zodResolver(webinarPrivateSchema.create),
+    defaultValues: initialValues,
+  })
+  const {
+    formState: { isSubmitting },
+  } = form
+
+  const getBatchId = form.watch('webinar_batch_id')
+
   const page = 1
   const pageSize = 100
 
@@ -71,12 +82,19 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
     setIsFetchingWebinarBatches(false)
   }, [])
 
-  const getInstructors = useCallback(async (page: number, pageSize: number) => {
-    const { data } = await findInstructors({ page, pageSize })
-    setInstructors(data)
+  const getInstructors = useCallback(
+    async (page: number, pageSize: number) => {
+      const { data } = await findInstructors({
+        page,
+        pageSize,
+        webinar_batch_id: getBatchId,
+      })
+      setInstructors(data)
 
-    setIsFetchingInstructors(false)
-  }, [])
+      setIsFetchingInstructors(false)
+    },
+    [getBatchId]
+  )
 
   useEffect(() => {
     getCategories(page, pageSize)
@@ -109,21 +127,20 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
       ? instructors.map((item) => {
           return {
             value: item.id,
-            label: `${item.user?.fullname} (${item.user?.email})`,
+            label: `${item.user?.fullname} (${item.user?.email}) - ${item.status}`,
           }
         })
       : []
 
-  const form = useForm<z.infer<typeof webinarPrivateSchema.create>>({
-    resolver: zodResolver(webinarPrivateSchema.create),
-    defaultValues: initialValues,
+  const selectRecordPeriod = ['1d', '3d', '7d', '14d'].map((item) => {
+    return {
+      value: item,
+      label: item,
+    }
   })
-  const {
-    formState: { isSubmitting },
-  } = form
 
   async function onSubmit(data: z.infer<typeof webinarPrivateSchema.create>) {
-    let values = { ...data }
+    let values = { ...data, recording_period: validate.empty(data.recording_period) }
 
     if (data.recording_url === '-') {
       values = {
@@ -144,6 +161,9 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
     )
   }
 
+  const checkBatch =
+    _.isNil(form.watch('webinar_batch_id')) || _.isEmpty(form.watch('webinar_batch_id'))
+
   return (
     <>
       <div className="mb-4">
@@ -161,7 +181,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="webinar_batch_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Webinar Batch</FormLabel>
+                      <FormLabel required>Webinar Batch</FormLabel>
                       <SelectInput
                         options={selectWebinarBatch}
                         onSelect={field.onChange}
@@ -179,12 +199,13 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="instructor_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Instructor</FormLabel>
+                      <FormLabel required>Instructor</FormLabel>
                       <SelectInput
                         options={selectInstructor}
                         onSelect={field.onChange}
                         defaultValue={field.value}
                         placeholder="Select a instructor"
+                        disabled={checkBatch}
                       />
 
                       <FormMessage />
@@ -198,7 +219,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel required>Title</FormLabel>
                     <FormControl>
                       <Input placeholder="Input your title" {...field} />
                     </FormControl>
@@ -213,7 +234,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel required>Description</FormLabel>
                     <FormControl>
                       <Textarea rows={4} placeholder="Input your description" {...field} />
                     </FormControl>
@@ -229,7 +250,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="category_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <FormLabel required>Category</FormLabel>
                       <SelectInput
                         options={selectCategory}
                         onSelect={field.onChange}
@@ -247,7 +268,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="chain_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Chain ID</FormLabel>
+                      <FormLabel optional>Chain ID</FormLabel>
                       <SelectInput
                         options={selectChain}
                         onSelect={field.onChange}
@@ -265,7 +286,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="start_date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Start Date</FormLabel>
+                      <FormLabel required>Start Date</FormLabel>
                       <FormControl>
                         <DateTimePicker date={field.value} setDate={field.onChange} />
                       </FormControl>
@@ -280,7 +301,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="end_date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>End Date</FormLabel>
+                      <FormLabel required>End Date</FormLabel>
                       <FormControl>
                         <DateTimePicker date={field.value} setDate={field.onChange} />
                       </FormControl>
@@ -296,7 +317,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 name="webinar_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Webinar URL</FormLabel>
+                    <FormLabel required>Webinar URL</FormLabel>
                     <FormControl>
                       <Input placeholder="Input your webinar url" {...field} />
                     </FormControl>
@@ -311,7 +332,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 name="recording_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Recording URL</FormLabel>
+                    <FormLabel optional>Recording URL</FormLabel>
                     <FormControl>
                       <Input placeholder="Input your recording url" {...field} />
                     </FormControl>
@@ -327,7 +348,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="recording_price"
                   render={({ field }) => (
                     <FormItem className="flex flex-col space-y-3">
-                      <FormLabel>Recording Price</FormLabel>
+                      <FormLabel optional>Recording Price</FormLabel>
                       <FormControl>
                         <NumberInput
                           id="recording_price"
@@ -348,14 +369,13 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   name="recording_period"
                   render={({ field }) => (
                     <FormItem className="flex flex-col space-y-3">
-                      <FormLabel>Recording Period</FormLabel>
+                      <FormLabel optional>Recording Period</FormLabel>
                       <FormControl>
-                        <NumberInput
-                          id="recording_period"
-                          value={field.value}
-                          onValueChange={(e) => field.onChange(e.value)}
-                          thousandSeparator=","
-                          placeholder="Enter recording period"
+                        <SelectInput
+                          options={selectRecordPeriod}
+                          onSelect={field.onChange}
+                          defaultValue={String(field.value)}
+                          placeholder="Select a recording period"
                         />
                       </FormControl>
 
@@ -383,7 +403,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   </Button>
                   <Button
                     variant={'default'}
-                    className='w-full rounded-lg font-semibold'
+                    className="w-full rounded-lg font-semibold"
                     type="submit"
                     disabled={isSubmitting}
                   >
@@ -395,7 +415,10 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 <Separator />
 
                 <div className="flex flex-col gap-4">
-                  <span className="text-sm font-medium">Status</span>
+                  <div className="space-x-1">
+                    <span className="text-sm font-medium">Status</span>
+                    <span className="text-sm text-muted-foreground">(optional)</span>
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -475,7 +498,7 @@ export function FormAdd() {
         webinar_url: '',
         recording_url: '-',
         recording_price: 0,
-        recording_period: null,
+        recording_period: '',
         is_active: true,
         is_practice: false,
         chain_id: '8453',
@@ -508,7 +531,7 @@ export function FormEdit({ id }: FormEditProps) {
     webinar_url: '',
     recording_url: '-',
     recording_price: 0,
-    recording_period: null,
+    recording_period: '',
     is_active: true,
     is_practice: false,
     chain_id: '8453',

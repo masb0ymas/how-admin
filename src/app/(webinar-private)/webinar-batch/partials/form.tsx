@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconArrowLeft, IconLoader } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
-import _ from 'lodash'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -28,7 +27,7 @@ import { Separator } from '~/components/ui/separator'
 import { InstructorEntity } from '~/data/entity/instructor'
 import { WebinarBatchEntity } from '~/data/entity/webinar-batch'
 import webinarBatchSchema from '~/data/schema/webinar-batch'
-import { capitalizeFirstLetter } from '~/lib/string'
+import { selectWebinarType } from '~/lib/status'
 import { findInstructors } from '../../instructor/action'
 import { createWebinarBatch, findWebinarBatchById, updateWebinarBatch } from '../action'
 
@@ -58,22 +57,29 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
     getInstructors(page, pageSize)
   }, [getInstructors, page, pageSize])
 
-  const selectInstructor =
+  const selectLecturer =
     instructors.length > 0
-      ? instructors.map((item) => {
-          return {
-            value: item.id,
-            label: `${item.user?.fullname} (${item.user?.email})`,
-          }
-        })
+      ? instructors
+          .filter((x) => x.status === 'LECTURER')
+          .map((item) => {
+            return {
+              value: item.id,
+              label: `${item.user?.fullname} (${item.user?.email}) - ${item.status}`,
+            }
+          })
       : []
 
-  const selectType = ['private', 'exclusive', 'express'].map((item) => {
-    return {
-      value: _.toUpper(item),
-      label: capitalizeFirstLetter(item),
-    }
-  })
+  const selectAssistant =
+    instructors.length > 0
+      ? instructors
+          .filter((x) => x.status === 'ASSISTANT')
+          .map((item) => {
+            return {
+              value: item.id,
+              label: `${item.user?.fullname} (${item.user?.email}) - ${item.status}`,
+            }
+          })
+      : []
 
   const form = useForm<z.infer<typeof webinarBatchSchema.create>>({
     resolver: zodResolver(webinarBatchSchema.create),
@@ -113,74 +119,9 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel required>Name</FormLabel>
                         <FormControl>
                           <Input placeholder="Input your webinar batch name" {...field} />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="instructor_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Instructor</FormLabel>
-                        <SelectInput
-                          options={selectInstructor}
-                          onSelect={field.onChange}
-                          defaultValue={field.value}
-                          placeholder="Select a instructor"
-                        />
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="start_date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>Start Date</FormLabel>
-                        <CalendarInput value={field.value} onChange={field.onChange} />
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="end_date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>End Date</FormLabel>
-                        <CalendarInput value={field.value} onChange={field.onChange} />
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="batch"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>Batch</FormLabel>
-                        <FormControl>
-                          <NumberInput
-                            id="batch"
-                            value={field.value}
-                            onValueChange={(e) => field.onChange(e.value)}
-                            thousandSeparator=","
-                            placeholder="Enter batch"
-                          />
                         </FormControl>
 
                         <FormMessage />
@@ -193,13 +134,100 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name="type"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Type</FormLabel>
+                        <FormLabel required>Type</FormLabel>
                         <SelectInput
-                          options={selectType}
+                          options={selectWebinarType}
                           onSelect={field.onChange}
                           defaultValue={field.value}
                           placeholder="Select a type"
                         />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="instructor_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel required>Instructor</FormLabel>
+                        <SelectInput
+                          options={selectLecturer}
+                          onSelect={field.onChange}
+                          defaultValue={field.value}
+                          placeholder="Select a instructor"
+                        />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="assistant_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel optional>Assistant</FormLabel>
+                        <SelectInput
+                          options={selectAssistant}
+                          onSelect={field.onChange}
+                          defaultValue={String(field.value)}
+                          placeholder="Select a assistant"
+                        />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="start_date"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormLabel required>Start Date</FormLabel>
+                        <CalendarInput value={field.value} onChange={field.onChange} />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="end_date"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormLabel required>End Date</FormLabel>
+                        <CalendarInput value={field.value} onChange={field.onChange} />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="batch"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-3">
+                        <FormLabel required>Batch</FormLabel>
+                        <FormControl>
+                          <NumberInput
+                            id="batch"
+                            value={field.value}
+                            onValueChange={(e) => field.onChange(e.value)}
+                            thousandSeparator=","
+                            placeholder="Enter batch"
+                          />
+                        </FormControl>
 
                         <FormMessage />
                       </FormItem>
@@ -238,7 +266,10 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 <Separator />
 
                 <div className="flex flex-col gap-4">
-                  <span className="text-sm font-medium">Status</span>
+                  <div className="space-x-1">
+                    <span className="text-sm font-medium">Status</span>
+                    <span className="text-sm text-muted-foreground">(optional)</span>
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -291,6 +322,7 @@ export function FormAdd() {
       initialValues={{
         name: '',
         instructor_id: '',
+        assistant_id: '',
         batch: '',
         type: '',
         start_date: new Date(),
@@ -317,6 +349,7 @@ export function FormEdit({ id }: FormEditProps) {
     deleted_at: null,
     name: '',
     instructor_id: '',
+    assistant_id: '',
     batch: '',
     type: '',
     start_date: new Date(),

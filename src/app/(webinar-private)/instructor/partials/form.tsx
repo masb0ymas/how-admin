@@ -26,9 +26,10 @@ import { Textarea } from '~/components/ui/textarea'
 import { InstructorEntity } from '~/data/entity/instructor'
 import { UserEntity } from '~/data/entity/user'
 import instructorSchema from '~/data/schema/instructor'
+import ConstRole from '~/lib/constant/role'
+import { selectInstructorStatus } from '~/lib/status'
 import { validate } from '~/lib/validate'
 import { createInstructor, findInstructorById, updateInstructor } from '../action'
-import ConstRole from '~/lib/constant/role'
 
 type FormProps = {
   initialValues: z.infer<typeof instructorSchema.create>
@@ -84,6 +85,14 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
     await mutation.mutateAsync(data)
   }
 
+  if (isFetching) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader />
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="mb-4">
@@ -96,30 +105,50 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
             <div className="lg:col-span-3">
               <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="user_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>User</FormLabel>
-                      <SelectInput
-                        options={selectUsers}
-                        onSelect={field.onChange}
-                        defaultValue={field.value}
-                        placeholder="Select a user"
-                      />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="user_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel required>User</FormLabel>
+                        <SelectInput
+                          options={selectUsers}
+                          onSelect={field.onChange}
+                          defaultValue={field.value}
+                          placeholder="Select a user"
+                        />
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel required>Status</FormLabel>
+                        <SelectInput
+                          options={selectInstructorStatus}
+                          onSelect={field.onChange}
+                          defaultValue={field.value}
+                          placeholder="Select a status"
+                        />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <FormField
                   control={form.control}
                   name="bio"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Bio</FormLabel>
+                      <FormLabel required>Bio</FormLabel>
                       <FormControl>
                         <Textarea rows={4} placeholder="Input your bio" {...field} />
                       </FormControl>
@@ -148,7 +177,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   </Button>
                   <Button
                     variant={'default'}
-                    className='w-full rounded-lg font-semibold'
+                    className="w-full rounded-lg font-semibold"
                     type="submit"
                     disabled={isSubmitting}
                   >
@@ -160,7 +189,10 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 <Separator />
 
                 <div className="flex flex-col gap-4">
-                  <span className="text-sm font-medium">Status</span>
+                  <div className="space-x-1">
+                    <span className="text-sm font-medium">Status</span>
+                    <span className="text-sm text-muted-foreground">(optional)</span>
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -231,6 +263,7 @@ export function FormAdd() {
     <AbstractForm
       initialValues={{
         user_id: '',
+        status: '',
         bio: '',
         image: '',
         is_active: true,
@@ -258,6 +291,7 @@ export function FormEdit({ id }: FormEditProps) {
     updated_at: '',
     deleted_at: null,
     user_id: '',
+    status: '',
     bio: '',
     image: '',
     is_active: false,

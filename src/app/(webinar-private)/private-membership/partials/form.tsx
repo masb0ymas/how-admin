@@ -155,8 +155,8 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
   return (
     <>
       <div className="mb-4">
-        <h1 className="text-2xl font-bold">{`${isEdit ? 'Edit' : 'Add'} - Webinar Batch`}</h1>
-        <h4 className="text-muted-foreground">You can manage webinar batch here</h4>
+        <h1 className="text-2xl font-bold">{`${isEdit ? 'Edit' : 'Add'} - Private Membership`}</h1>
+        <h4 className="text-muted-foreground">You can manage private membership here</h4>
       </div>
 
       <Form {...form}>
@@ -170,7 +170,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name="user_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>User</FormLabel>
+                        <FormLabel required>User</FormLabel>
                         <SelectInput
                           options={selectUsers}
                           onSelect={field.onChange}
@@ -188,7 +188,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name="webinar_batch_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Webinar Batch</FormLabel>
+                        <FormLabel required>Webinar Batch</FormLabel>
                         <SelectInput
                           options={selectWebinarBatches}
                           onSelect={field.onChange}
@@ -202,31 +202,13 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                   />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="webinar_private_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Webinar Private</FormLabel>
-                      <SelectInput
-                        options={selectWebinarPrivate}
-                        onSelect={field.onChange}
-                        defaultValue={String(field.value)}
-                        placeholder="Select a webinar private"
-                      />
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="start_date"
                     render={({ field }) => (
                       <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>Start Date</FormLabel>
+                        <FormLabel required>Start Date</FormLabel>
                         <CalendarInput value={field.value} onChange={field.onChange} />
 
                         <FormMessage />
@@ -239,7 +221,7 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     name="end_date"
                     render={({ field }) => (
                       <FormItem className="flex flex-col space-y-3">
-                        <FormLabel>End Date</FormLabel>
+                        <FormLabel required>End Date</FormLabel>
                         <CalendarInput value={field.value} onChange={field.onChange} />
 
                         <FormMessage />
@@ -247,6 +229,24 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="webinar_private_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel optional>Webinar Private</FormLabel>
+                      <SelectInput
+                        options={selectWebinarPrivate}
+                        onSelect={field.onChange}
+                        defaultValue={String(field.value)}
+                        placeholder="Select a webinar private"
+                      />
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
@@ -279,7 +279,10 @@ function AbstractForm({ initialValues, mutation, isEdit = false }: FormProps) {
                 <Separator />
 
                 <div className="flex flex-col gap-4">
-                  <span className="text-sm font-medium">Status</span>
+                  <div className='space-x-1'>
+                    <span className="text-sm font-medium">Status</span>
+                    <span className="text-sm text-muted-foreground">(optional)</span>
+                  </div>
 
                   <FormField
                     control={form.control}

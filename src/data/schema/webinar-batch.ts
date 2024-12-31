@@ -8,6 +8,13 @@ const create = z.object({
     })
     .min(2, `instructor_id can't be empty`),
 
+  assistant_id: z
+    .string({
+      required_error: 'assistant_id is required',
+      invalid_type_error: 'assistant_id must be a string',
+    })
+    .nullable(),
+
   name: z
     .string({
       required_error: 'name is required',

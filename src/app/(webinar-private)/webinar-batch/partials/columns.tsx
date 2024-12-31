@@ -14,6 +14,10 @@ export const columns: ColumnDef<WebinarBatchEntity>[] = [
     header: ({ column }) => <ColumnSorted column={column} title="Instructor" />,
   },
   {
+    accessorKey: 'assistant.user.fullname',
+    header: ({ column }) => <ColumnSorted column={column} title="Assistant" />,
+  },
+  {
     accessorKey: 'name',
     header: ({ column }) => <ColumnSorted column={column} title="Name" />,
   },

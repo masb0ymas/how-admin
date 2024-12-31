@@ -13,11 +13,18 @@ type IProps = {
   onSelect: (value: string) => void
   defaultValue: string
   placeholder?: string
+  disabled?: boolean
 }
 
-export default function SelectInput({ options, onSelect, defaultValue, placeholder }: IProps) {
+export default function SelectInput({
+  options,
+  onSelect,
+  defaultValue,
+  placeholder,
+  disabled = false,
+}: IProps) {
   return (
-    <Select onValueChange={onSelect} defaultValue={defaultValue}>
+    <Select onValueChange={onSelect} defaultValue={defaultValue} disabled={disabled}>
       <FormControl>
         <SelectTrigger>
           <SelectValue placeholder={placeholder} />
