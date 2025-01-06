@@ -99,3 +99,24 @@ export function getSplitName(value: string): { firstName: string; lastName: stri
     lastName: splitValue.length > 1 ? splitValue.slice(1).join(' ') : '',
   }
 }
+
+/**
+ * Get Initial Name
+ * @param value 
+ * @returns 
+ */
+export function getInitialName(value: string): string {
+  const names = value.trim().split(/\s+/)
+  
+  if (names.length === 0) return ''
+  
+  const firstInitial = names[0].charAt(0).toUpperCase()
+  
+  if (names.length === 1) {
+    const secondChar = names[0].charAt(1).toUpperCase()
+    return `${firstInitial}${secondChar}`
+  }
+  
+  const lastInitial = names[names.length - 1].charAt(0).toUpperCase()
+  return `${firstInitial}${lastInitial}`
+}
