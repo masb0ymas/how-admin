@@ -16,6 +16,10 @@ export const columns: ColumnDef<WebinarPrivateMemberEntity>[] = [
     header: ({ column }) => <ColumnSorted column={column} title="Fullname" />,
   },
   {
+    accessorKey: 'user.email',
+    header: ({ column }) => <ColumnSorted column={column} title="Email" />,
+  },
+  {
     accessorKey: 'webinar_batch.batch',
     header: ({ column }) => <ColumnSorted column={column} title="Batch" />,
   },

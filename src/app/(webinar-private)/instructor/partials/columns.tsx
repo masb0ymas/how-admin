@@ -14,14 +14,18 @@ export const columns: ColumnDef<InstructorEntity>[] = [
     header: ({ column }) => <ColumnSorted column={column} title="Fullname" />,
   },
   {
+    accessorKey: 'user.email',
+    header: ({ column }) => <ColumnSorted column={column} title="Email" />,
+  },
+  {
     accessorKey: 'status',
     header: ({ column }) => <ColumnSorted column={column} title="Status" />,
     cell: ({ row }) => <BadgeInstructorStatus status={row.original.status} />,
   },
-  {
-    accessorKey: 'bio',
-    header: ({ column }) => <ColumnSorted column={column} title="Bio" />,
-  },
+  // {
+  //   accessorKey: 'bio',
+  //   header: ({ column }) => <ColumnSorted column={column} title="Bio" />,
+  // },
   // {
   //   accessorKey: 'image',
   //   header: ({ column }) => <ColumnSorted column={column} title="Image" />,
